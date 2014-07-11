@@ -11,7 +11,8 @@
 class wp2ox_select_query {
 
 	/**
-	 * @var $pdo object PHP Database Object. Contains the database connection used in the queries
+	 * @var $pdo object PHP Database Object. Contains the database connection
+	 * used in the queries
 	 */
 
 	public $sql;

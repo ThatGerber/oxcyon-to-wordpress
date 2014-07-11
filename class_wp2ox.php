@@ -12,13 +12,9 @@
  */
 
 /**
- * SIM Database Transfer Script
- * The process will be: Categories, Tags, Pages, Posts. This data will be used to
- * fill in the different sections of the WordPress default database.
- */
-
-/**
  * Class wp2ox
+ *
+ * Holds data and references for transferring between Wordpress and Oxcyon.
  */
 class wp2ox {
 
@@ -91,107 +87,20 @@ class wp2ox {
 		return $pdoObject->fetchAll( PDO::FETCH_ASSOC );
 	}
 }
-/**
- * Class oxc_postCategories
- * Returns array of category ID's (INT)
- *
- * @var $data   = string
- * @var $array  = reference table
- *
- * returns array
- */
-class oxc_authorCategoryTag {
-    // source data for matching
-    protected $idArray = Array();
-    // old categories
-    protected $data = Array();
-    // return data
-    protected $results;
 
-    // Construct
-    public function __construct( $data, $array ) {
-        // bust up string into array
-        $this->data     = explode( ', ', $data ); // $oxc_row['Taxonomy'];
-        // data to compare against
-        $this->idArray  = $array;
-        return $this->resultTerms();
-    }
-    // if the tag is match, add to array
-    protected function resultTerms( ) {
-        // Start the loop
-        foreach ( $this->data as $string ) {
-            // see if a category matches
-            $newTerm = $this->validateData( $string );
-            array_push( $newTerm, $this->results );
-        }
-        return $this->results;
-    }
-    // checks to see if it's in array
-    protected function validateData( $string ) {
-        $newId = array_search($string, $this->idArray);
-        if ( $newId ) {
-            return $newId;
-        } else {
-            return false;
-        }
-    }
-}
-/**
- * Class oxc_postTags
- * @extends oxc_postCategories
- *
- * @var $data
- * String from taxonomy column
- * @var $array
- * Array of Category IDs
- *
- * returns string of tags
- */
-class oxc_postTags extends oxc_authorCategoryTag {
+/** Other Classes */
 
-	/**
-	 * @param $data
-	 * @param $array
-	 */
-	public function __construct( $data, $array ) {
-        parent::__construct($data, $array);
-    }
+// Database abstraction layer
+include( $import_folder . "/class_wp2ox_dal.php");
 
-    protected function resultTerms( ) {
-        // Start the loop
-        foreach ( $this->data as $string ) {
-            // see if a category matches
-            $newTerm = $this->validateData( $string );
-            array_push( $newTerm, $this->results );
-        }
-        $tagResults = explode( ', ', $this->results );
-        return $tagResults;
-    }
+// Server queries - To fold into DAL
+include( $import_folder . "/class_wp2ox_select_query.php");
 
-}
+// Author/Category creator
+include( $import_folder . "/class_wp2ox_author.php");
 
-function strip_html_tags( $text ) {
-	$text = preg_replace(
-		[
-			'@<head[^>]*?>.*?</head>@siu',
-			'@<style[^>]*?>.*?</style>@siu',
-			'@<title[^>]*?>.*?</title>@siu',
-			'@<script[^>]*?.*?</script>@siu',
-			'@<object[^>]*?.*?</object>@siu',
-			'@<embed[^>]*?.*?</embed>@siu',
-			'@<applet[^>]*?.*?</applet>@siu',
-			'@<noframes[^>]*?.*?</noframes>@siu',
-			'@<noscript[^>]*?.*?</noscript>@siu',
-			'@<noembed[^>]*?.*?</noembed>@siu',
-			"/class\s*=\s*'[^\']*[^\']*'/"
-		],
-		array('', '', '', '', '', '', '', '', '', '', ''),
-		$text );
+// Tag Creator
+include( $import_folder . "/class_wp2ox_tag.php");
 
-	return $text;
-}
+//include( $import_folder . "/class_wp2ox_category.php");
 
-
-function reportText( $stringH, $string ) {
-	echo '<' . $stringH . '>' . $string . '</' . $stringH . '>';
-}

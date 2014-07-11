@@ -7,7 +7,32 @@ $import_folder = dirname( __FILE__ );
 require_once( ABSPATH . '/wp-load.php');
 
 include( $import_folder . "/class_wp2ox.php");
-include( $import_folder . "/class_wp2ox_select_query.php");
+
+function strip_html_tags( $text ) {
+	$text = preg_replace(
+		[
+			'@<head[^>]*?>.*?</head>@siu',
+			'@<style[^>]*?>.*?</style>@siu',
+			'@<title[^>]*?>.*?</title>@siu',
+			'@<script[^>]*?.*?</script>@siu',
+			'@<object[^>]*?.*?</object>@siu',
+			'@<embed[^>]*?.*?</embed>@siu',
+			'@<applet[^>]*?.*?</applet>@siu',
+			'@<noframes[^>]*?.*?</noframes>@siu',
+			'@<noscript[^>]*?.*?</noscript>@siu',
+			'@<noembed[^>]*?.*?</noembed>@siu',
+			"/class\s*=\s*'[^\']*[^\']*'/"
+		],
+		array('', '', '', '', '', '', '', '', '', '', ''),
+		$text );
+
+	return $text;
+}
+
+
+function reportText( $stringH, $string ) {
+	echo '<' . $stringH . '>' . $string . '</' . $stringH . '>';
+}
 
 $wp2ox_data            = new wp2ox;
 /**
@@ -30,7 +55,6 @@ $wp2ox_data->category_value = "%AAAAAAAAAAAAAAAA%";
  * Password to connect
  * Database to connect into
  */
-include( $import_folder . "/class_wp2ox_dal.php");
 $wp2ox_dbh             = new wp2ox_dal;
 $wp2ox_dbh->dbusername = 'Dev_User';
 $wp2ox_dbh->dbpassword = 'Welcome2013';
@@ -96,7 +120,11 @@ foreach ( $oxc_authorData as $author ) {
 	$wp2ox_author_array[ $userId ] = $moduleSID;
 
 	/** Show results on the page */
-	reportText( 'li', "$author_displayName - $moduleSID <strong>to</strong> $author_displayName - $author_userId");
+	reportText(
+		'li',
+		"$author_displayName - $moduleSID <strong>to</strong> $author_displayName -
+		$author_userId"
+	);
 }
 echo '</ul>';
 
@@ -231,29 +259,29 @@ $old_article_data = $old_articles->queryResults();
 $postNumber = 1; // iterate the query
 foreach ( $old_article_data as $old_article ) {
 	// Author
-	$oxc_postAuthor     = new oxc_authorCategoryTag( $old_article['Author'], $oxc_authorId );
+	$oxc_postAuthor     = new oxc_authorCategoryTag( $old_article['Author'], $wp2ox_data->authors );
 	// Categories
-	$oxc_postCategories = new oxc_authorCategoryTag( $old_article['Taxonomy'], $oxc_categoryID );
+	$oxc_postCategories = new oxc_authorCategoryTag( $old_article['Taxonomy'], $wp2ox_data->categories );
 	// Tags
 	$oxc_postTags       = new oxc_postTags( $old_article['Taxonomy'], $wp2ox_data->tags );
 
 	// Post Data
-	$oxc_post = array(
+	$new_post = array(
 		// The full text of the post.
-		'post_content'   => mb_convert_encoding( $oxc_row['Body Copy'], 'UTF-8' ),
+		'post_content'   => mb_convert_encoding( $old_article['Body Copy'], 'UTF-8' ),
 		// The name (slug) for your post
-		'post_name'      => sanitize_title_with_dashes( $oxc_row['Title'] ),
+		'post_name'      => sanitize_title_with_dashes( $old_article['Title'] ),
 		// The title of your post.
-		'post_title'     => sanitize_title( $oxc_row['Title'] ),
+		'post_title'     => sanitize_title( $old_article['Title'] ),
 		// will need to import to a table
 		// The user ID number of the author. Default is the current user ID.
-		'post_author'    => 'Beverage Dynamics',
+		'post_author'    => $oxc_postAuthor,
 		// For all your post excerpt needs.
-		'post_excerpt'   => mb_convert_encoding( $oxc_row['Deck'], 'UTF-8' ),
+		'post_excerpt'   => wp_strip_all_tags( mb_convert_encoding( $old_article['Deck'], 'UTF-8' ) ),
 		// The time post was made.
-		'post_date'      => date("Y-m-d H:i:s", strtotime($oxc_row['StartDate'])),
+		'post_date'      => date("Y-m-d H:i:s", strtotime($old_article['StartDate'])),
 		// The time post was made, in GMT.
-		'post_date_gmt'  => date("Y-m-d H:i:s", strtotime( $oxc_row['StartDate'] ) - 1800 ),
+		'post_date_gmt'  => date("Y-m-d H:i:s", strtotime( $old_article['StartDate'] ) - 1800 ),
 		// Default is the option 'default_comment_status', or 'closed'.
 		'comment_status' => 'open',
 		// Default empty. array( int, int, int )
@@ -262,7 +290,7 @@ foreach ( $old_article_data as $old_article ) {
 		'tags_input'     => $oxc_postTags
 	);
 	// Create Post
-	$import = wp_insert_post( $oxc_post, true );
+	$import = wp_insert_post( $new_post, true );
 	if ( $import ) {
 		reportText( 'p', "Post Number: $postNumber added successfully");
 		$postNumber++;

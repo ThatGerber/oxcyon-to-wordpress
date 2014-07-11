@@ -11,7 +11,7 @@
  * @since       2/18/2014
  */
 
-class wp2ox_dal {
+class wp2ox_dal extends wp2ox {
 
 	public $dbusername;
 	public $dbpassword;
