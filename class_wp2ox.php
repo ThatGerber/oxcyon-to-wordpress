@@ -47,6 +47,13 @@ class wp2ox {
 	public $categories;
 
 	/**
+	 * Tag reference array.
+	 *
+	 * @var $tags array Key:Value of tag. tag[title] = old_id
+	 */
+	public $tags;
+
+	/**
 	 * PDO connection
 	 * @param $dbh
 	 */

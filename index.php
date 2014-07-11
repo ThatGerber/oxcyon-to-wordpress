@@ -183,103 +183,89 @@ $wp2ox_data->categories = $wp2ox_category_array;
  * importing the next stories
  */
 reportText( 'h3', "Creating Tag Reference Table");
-$oxc_tagSql = 'SELECT ModuleSID, Title
-    FROM ' . $oxc_importBrand . '_Taxonomy_old'; //$oxc_tagSql
-$oxc_tags = new oxc_selectQuery( $oxc_bevOld ); // new select query
-$oxc_tagData = $oxc_tags->queryResults( $oxc_tagSql ); // query results
+
+// The SQL
+$wp2ox_tag_sql = 'SELECT ModuleSID, Title
+    FROM ' . $wp2ox_data->brand . '_Taxonomy_old'; //$oxc_tagSql
+
+// The Query
+$oxc_tags = new wp2ox_select_query( $wp2ox_dbh, $wp2ox_tag_sql );
+$oxc_tag_data = $oxc_tags->queryResults();
+
 /**
  * $oxc_tagId
  * Tag Reference Array
  * Key = Tag Title
  * Value = Old Tag ID
  */
-$oxc_tagId = array();
+$wp2ox_tag_array = array();
+
+// The Import
 echo '<ul>';
-foreach ($oxc_tagData as $oxc_tag) {
-	$oxc_tagId[ $oxc_tag['Title'] ] = $oxc_tag['ModuleSID'];
+foreach ( $oxc_tag_data as $old_tag ) {
+	$wp2ox_tag_array[ $old_tag['Title'] ] = $old_tag['ModuleSID'];
 	reportText(
 		'li',
-		$oxc_tag['ModuleSID'] . " - " . $oxc_tag['Title'] . " added to table"
+		$old_tag['ModuleSID'] . " - " . $old_tag['Title'] . " added to table"
 	);
 }
 echo '</ul>';
 
-/**
- * 2. TAGS
- *
- * Now we're going to add create an array of Tags for Wordpress
- */
-// sql statement - Same info, remove "WHERE"
-$oxc_tagSql = 'SELECT ModuleSID, Title
-    FROM ' . $wp2ox_obj->brand . '_Taxonomy_old';
-// get the data and push it to a variable
-$oxc_tagData = $oxc_bevOld->query( $oxc_tagSql );
-/**
- * Tag Reference Array
- * Key = Tag Title
- * Value = Old Tag ID
- */
-$oxc_tagId = array();
-foreach ($oxc_tagData as $oxc_tag) {
-    $oxc_tagId[$oxc_tag['Title']] = $oxc_tag['ModuleSID'];
-}
+$wp2ox_data->tags = $wp2ox_tag_array;
+
 /************************************************************************************
- * ARTICLES
+ * 4. ARTICLES
  *
  * Time to start iterating through the articles
  */
-$oxc_articlesSql = 'Select * FROM ' . $wp2ox_obj->brand . '_articles_Old';
-$oxc_oldData = $oxc_bevOld->query( $oxc_articlesSql );
-$oxc_oldData->setFetchMode(PDO::FETCH_ASSOC);
-//global - used calculating dates
-$oxc_seconds = 0;
-while ( $oxc_row = $oxc_oldData->fetch() ) {
-    //
-    // Body Content - fix encoding on body content
-    $oxc_bodyString = mb_convert_encoding( $oxc_row['Body Copy'], 'UTF-8' );
-    //
-    // Post Title (Used in slug)
-    $oxc_title = sanitize_title( $oxc_row['Title'] );
-    //
-    // Post Excerpt
-    $oxc_deck = mb_convert_encoding( $oxc_row['Deck'], 'UTF-8' );
-    //
-    // Post Date
-    $oxc_postDate = date("Y-m-d H:i:s", strtotime($oxc_row['StartDate']));
-    //
-    // Post Date GMT
-    $oxc_postDateGmt = date("Y-m-d H:i:s", strtotime( $oxc_row['StartDate'] ) - 1800 );
-    //
-    // Categories and Tags
-    $oxc_postCategories = array();  // Category
-    $oxc_tagArray       = array();  // Tags
-    // Start the loop
-    $oxc_taxArray = explode(', ', $oxc_row['Taxonomy']); // turn taxonomy into Comma string
-    foreach ($oxc_taxArray as $oxc_category) {
-        $oxc_tagTitle = array_search($oxc_category, $oxc_tagId);
-        $oxc_catId = array_search($oxc_category, $oxc_categoryID);
-        if ( $oxc_tagTitle ) {
-            array_push( $oxc_tagsArray, array_search($oxc_category, $oxc_tagId) );
-        }
-        if ( $oxc_catId ) {
-            array_push( $oxc_postCategories, array_search($oxc_category, $oxc_categoryID) );
-        }
-    }
-    $oxc_postTags = implode(',', $oxc_tagArray); // Tags again
-    //
-    // Post Data
-    $oxc_post = array(
-        'post_content'   => $oxc_bodyString, // The full text of the post.
-        'post_name'      => sanitize_title_with_dashes($oxc_title), // The name (slug) for your post
-        'post_title'     => $oxc_title, // The title of your post.
-        // will need to import to a table
-        //'post_author'    => [ <user ID> ] // The user ID number of the author. Default is the current user ID.
-        'post_excerpt'   => $oxc_deck, // For all your post excerpt needs.
-        'post_date'      => $oxc_postDate, // The time post was made.
-        'post_date_gmt'  => $oxc_postDateGmt, // The time post was made, in GMT.
-        'comment_status' => 'open', // Default is the option 'default_comment_status', or 'closed'.
-        'post_category'  => $oxc_postCategories, // Default empty.
-        'tags_input'     => $oxc_postTags// Default empty.
-    );
-    wp_insert_post( $oxc_post, true );  // Create Post
+reportText( 'h3', "Importing Articles");
+
+// The SQL
+$oxc_articlesSql = 'Select * FROM ' . $oxc_importBrand . '_articles_Old';
+
+// The Query
+$oxc_articles = new oxc_selectQuery( $oxc_bevOld ); // new select query
+$oxc_articleData = $oxc_tags->queryResults( $oxc_articlesSql ); // query results
+
+// The Import
+// iterate the query
+$postNumber = 1;
+foreach ( $oxc_articleData as $oxc_row ) {
+	// Author
+	$oxc_postAuthor = new oxc_authorCategoryTag( $oxc_row['Author'], $oxc_authorId );
+	// Categories
+	$oxc_postCategories = new oxc_authorCategoryTag( $oxc_row['Taxonomy'], $oxc_categoryID );
+	// Tags
+	$oxc_postTags      = new oxc_postTags( $oxc_row['Taxonomy'], $oxc_tagId );
+
+	// Post Data
+	$oxc_post = array(
+		// The full text of the post.
+		'post_content'   => mb_convert_encoding( $oxc_row['Body Copy'], 'UTF-8' ),
+		// The name (slug) for your post
+		'post_name'      => sanitize_title_with_dashes( $oxc_row['Title'] ),
+		// The title of your post.
+		'post_title'     => sanitize_title( $oxc_row['Title'] ),
+		// will need to import to a table
+		// The user ID number of the author. Default is the current user ID.
+		'post_author'    => 'Beverage Dynamics',
+		// For all your post excerpt needs.
+		'post_excerpt'   => mb_convert_encoding( $oxc_row['Deck'], 'UTF-8' ),
+		// The time post was made.
+		'post_date'      => date("Y-m-d H:i:s", strtotime($oxc_row['StartDate'])),
+		// The time post was made, in GMT.
+		'post_date_gmt'  => date("Y-m-d H:i:s", strtotime( $oxc_row['StartDate'] ) - 1800 ),
+		// Default is the option 'default_comment_status', or 'closed'.
+		'comment_status' => 'open',
+		// Default empty. array( int, int, int )
+		'post_category'  => $oxc_postCategories,
+		// Default empty. 'tag, tag, tag'
+		'tags_input'     => $oxc_postTags
+	);
+	// Create Post
+	$import = wp_insert_post( $oxc_post, true );
+	if ( $import ) {
+		reportText( 'p', "Post Number: $postNumber added successfully");
+		$postNumber++;
+	}
 }

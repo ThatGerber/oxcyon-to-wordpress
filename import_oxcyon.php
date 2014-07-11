@@ -127,6 +127,7 @@ foreach ($oxc_tagData as $oxc_tag) {
 echo '</ul>';
 // Close the handle
 unset( $oxc_tags );
+
 /************************************************************************************
  * 4. ARTICLES
  *
