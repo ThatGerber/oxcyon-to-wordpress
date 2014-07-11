@@ -221,22 +221,21 @@ $wp2ox_data->tags = $wp2ox_tag_array;
 reportText( 'h3', "Importing Articles");
 
 // The SQL
-$oxc_articlesSql = 'Select * FROM ' . $oxc_importBrand . '_articles_Old';
+$wp2ox_article_sql = 'Select * FROM ' . $wp2ox_data->brand . '_articles_Old';
 
 // The Query
-$oxc_articles = new oxc_selectQuery( $oxc_bevOld ); // new select query
-$oxc_articleData = $oxc_tags->queryResults( $oxc_articlesSql ); // query results
+$old_articles = new wp2ox_select_query( $wp2ox_dbh, $wp2ox_article_sql );
+$old_article_data = $old_articles->queryResults();
 
 // The Import
-// iterate the query
-$postNumber = 1;
-foreach ( $oxc_articleData as $oxc_row ) {
+$postNumber = 1; // iterate the query
+foreach ( $old_article_data as $old_article ) {
 	// Author
-	$oxc_postAuthor = new oxc_authorCategoryTag( $oxc_row['Author'], $oxc_authorId );
+	$oxc_postAuthor     = new oxc_authorCategoryTag( $old_article['Author'], $oxc_authorId );
 	// Categories
-	$oxc_postCategories = new oxc_authorCategoryTag( $oxc_row['Taxonomy'], $oxc_categoryID );
+	$oxc_postCategories = new oxc_authorCategoryTag( $old_article['Taxonomy'], $oxc_categoryID );
 	// Tags
-	$oxc_postTags      = new oxc_postTags( $oxc_row['Taxonomy'], $oxc_tagId );
+	$oxc_postTags       = new oxc_postTags( $old_article['Taxonomy'], $wp2ox_data->tags );
 
 	// Post Data
 	$oxc_post = array(
