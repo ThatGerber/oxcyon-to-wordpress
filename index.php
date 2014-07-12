@@ -259,11 +259,11 @@ $old_article_data = $old_articles->queryResults();
 $postNumber = 1; // iterate the query
 foreach ( $old_article_data as $old_article ) {
 	// Author
-	$oxc_postAuthor     = new oxc_authorCategoryTag( $old_article['Author'], $wp2ox_data->authors );
+	$oxc_postAuthor     = new wp2ox_author( $old_article['Author'], $wp2ox_data->authors );
 	// Categories
-	$oxc_postCategories = new oxc_authorCategoryTag( $old_article['Taxonomy'], $wp2ox_data->categories );
+	$oxc_postCategories = new wp2ox_category( $old_article['Taxonomy'], $wp2ox_data->categories );
 	// Tags
-	$oxc_postTags       = new oxc_postTags( $old_article['Taxonomy'], $wp2ox_data->tags );
+	$oxc_postTags       = new wp2ox_tag( $old_article['Taxonomy'], $wp2ox_data->tags );
 
 	// Post Data
 	$new_post = array(
@@ -275,7 +275,7 @@ foreach ( $old_article_data as $old_article ) {
 		'post_title'     => sanitize_title( $old_article['Title'] ),
 		// will need to import to a table
 		// The user ID number of the author. Default is the current user ID.
-		'post_author'    => $oxc_postAuthor,
+		'post_author'    => intval( $oxc_postAuthor ),
 		// For all your post excerpt needs.
 		'post_excerpt'   => wp_strip_all_tags( mb_convert_encoding( $old_article['Deck'], 'UTF-8' ) ),
 		// The time post was made.

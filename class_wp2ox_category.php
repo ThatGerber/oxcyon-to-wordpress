@@ -9,7 +9,7 @@
  *
  * returns array
  */
-class oxc_authorCategoryTag {
+class wp2ox_category {
     // source data for matching
     protected $idArray = Array();
     // old categories
@@ -44,63 +44,4 @@ class oxc_authorCategoryTag {
             return false;
         }
     }
-}
-/**
- * Class oxc_postTags
- * @extends oxc_postCategories
- *
- * @var $data
- * String from taxonomy column
- * @var $array
- * Array of Category IDs
- *
- * returns string of tags
- */
-class oxc_postTags extends oxc_authorCategoryTag {
-
-	/**
-	 * @param $data
-	 * @param $array
-	 */
-	public function __construct( $data, $array ) {
-        parent::__construct($data, $array);
-    }
-
-    protected function resultTerms( ) {
-        // Start the loop
-        foreach ( $this->data as $string ) {
-            // see if a category matches
-            $newTerm = $this->validateData( $string );
-            array_push( $newTerm, $this->results );
-        }
-        $tagResults = explode( ', ', $this->results );
-        return $tagResults;
-    }
-
-}
-
-function strip_html_tags( $text ) {
-	$text = preg_replace(
-		[
-			'@<head[^>]*?>.*?</head>@siu',
-			'@<style[^>]*?>.*?</style>@siu',
-			'@<title[^>]*?>.*?</title>@siu',
-			'@<script[^>]*?.*?</script>@siu',
-			'@<object[^>]*?.*?</object>@siu',
-			'@<embed[^>]*?.*?</embed>@siu',
-			'@<applet[^>]*?.*?</applet>@siu',
-			'@<noframes[^>]*?.*?</noframes>@siu',
-			'@<noscript[^>]*?.*?</noscript>@siu',
-			'@<noembed[^>]*?.*?</noembed>@siu',
-			"/class\s*=\s*'[^\']*[^\']*'/"
-		],
-		array('', '', '', '', '', '', '', '', '', '', ''),
-		$text );
-
-	return $text;
-}
-
-
-function reportText( $stringH, $string ) {
-	echo '<' . $stringH . '>' . $string . '</' . $stringH . '>';
 }

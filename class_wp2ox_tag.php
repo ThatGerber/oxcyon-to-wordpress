@@ -11,7 +11,7 @@
  *
  * returns string of tags
  */
-class oxc_postTags extends oxc_authorCategoryTag {
+class wp2ox_tag extends wp2ox_category {
 
 	/**
 	 * @param $data

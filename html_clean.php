@@ -73,6 +73,28 @@ $replace[] = "-";
 $replace[] = '®';
 $replace[] = '™'; // tm
 
+$find_replace = array(
+	'<span>'   => "",    // No Spans
+	'</span>'  => "",    // No Spans
+	'<html>'   => "",    // No HTML
+	'</html>'  => "",    // No HTML
+	'<body>'   => "",    // No Body
+	'</body>'  => "",    // No Body
+	"\n"       => "",    // Get rid of newlines for wordpress
+	'®'        => "",    // Registered (remove working)
+	'Ã¢â‚¬Å“'  => '"',   // left side double smart quote
+	'Ã¢â‚¬Â' => '"',   // right side double smart quote
+	'Ã¢â‚¬Ëœ'  => "'",   // left side single smart quote
+	'Ã¢â‚¬â„¢' => "'",   // right side single smart quote
+	'â'        => "'",   // single quote
+	'Ã¢â‚¬Â¦'  => "...", // elipsis
+	'Ã¢â‚¬â€'=> "-",   // em dash
+	'Ã¢â‚¬â€œ' => "-",   // en dash
+	'Â'        => '®',   // register
+	'â¢'     => '™',   // tm
+);
+
+
 $i = 0;
 echo "Running convert </br>";
 foreach ($data as $row) {
