@@ -8,32 +8,6 @@ require_once( ABSPATH . '/wp-load.php');
 
 include( $import_folder . "/class_wp2ox.php");
 
-function strip_html_tags( $text ) {
-	$text = preg_replace(
-		[
-			'@<head[^>]*?>.*?</head>@siu',
-			'@<style[^>]*?>.*?</style>@siu',
-			'@<title[^>]*?>.*?</title>@siu',
-			'@<script[^>]*?.*?</script>@siu',
-			'@<object[^>]*?.*?</object>@siu',
-			'@<embed[^>]*?.*?</embed>@siu',
-			'@<applet[^>]*?.*?</applet>@siu',
-			'@<noframes[^>]*?.*?</noframes>@siu',
-			'@<noscript[^>]*?.*?</noscript>@siu',
-			'@<noembed[^>]*?.*?</noembed>@siu',
-			"/class\s*=\s*'[^\']*[^\']*'/"
-		],
-		array('', '', '', '', '', '', '', '', '', '', ''),
-		$text );
-
-	return $text;
-}
-
-
-function reportText( $stringH, $string ) {
-	echo '<' . $stringH . '>' . $string . '</' . $stringH . '>';
-}
-
 $wp2ox_data            = new wp2ox;
 /**
  * Update brand and category ID Value with each import
@@ -83,13 +57,13 @@ $wp2ox_dbh->database   = 'beverage_old';
  */
 
 // The SQL
-reportText( 'h3', 'Creating database connection to Author Table');
+$wp2ox_data->reportText( 'h3', 'Creating database connection to Author Table');
 $wp2ox_author_sql = 'SELECT * FROM ' . $wp2ox_data->brand . '_authors_old';
 
 // The Query
 $oxc_authors = new wp2ox_select_query( $wp2ox_dbh, $wp2ox_author_sql );
 $oxc_authorData = $oxc_authors->queryResults(); // query results
-reportText( 'h3', 'Adding New Users and creating Author reference table');
+$wp2ox_data->reportText( 'h3', 'Adding New Users and creating Author reference table');
 
 // Author reference data
 $wp2ox_author_array = array();
@@ -120,7 +94,7 @@ foreach ( $oxc_authorData as $author ) {
 	$wp2ox_author_array[ $userId ] = $moduleSID;
 
 	/** Show results on the page */
-	reportText(
+	$wp2ox_data->reportText(
 		'li',
 		"$author_displayName - $moduleSID <strong>to</strong> $author_displayName -
 		$author_userId"
@@ -157,7 +131,7 @@ $wp2ox_data->authors = $wp2ox_author_array;
  * user_id is stored in an array with the moduleSID so that it can be referenced later when
  * importing the next stories
  */
-reportText( 'h3', "Adding new Categories");
+$wp2ox_data->reportText( 'h3', "Adding new Categories");
 
 // The SQL
 $wp2ox_category_sql = 'SELECT ModuleSID, Title
@@ -177,7 +151,7 @@ echo '<ul>';
 foreach ( $oxc_category_data as $old_category ) {
 	$new_cat_ID = wp_create_category( $old_category['Title'] );
 	$wp2ox_category_array[$new_cat_ID] = $old_category['ModuleSID'];
-	reportText(
+	$wp2ox_data->reportText(
 		'li',
 		$old_category['title'] . " (" . $old_category['ModuleSID'] . ") to " . $new_cat_ID
 	);
@@ -210,7 +184,7 @@ $wp2ox_data->categories = $wp2ox_category_array;
  * user_id is stored in an array with the moduleSID so that it can be referenced later when
  * importing the next stories
  */
-reportText( 'h3', "Creating Tag Reference Table");
+$wp2ox_data->reportText( 'h3', "Creating Tag Reference Table");
 
 // The SQL
 $wp2ox_tag_sql = 'SELECT ModuleSID, Title
@@ -232,7 +206,7 @@ $wp2ox_tag_array = array();
 echo '<ul>';
 foreach ( $oxc_tag_data as $old_tag ) {
 	$wp2ox_tag_array[ $old_tag['Title'] ] = $old_tag['ModuleSID'];
-	reportText(
+	$wp2ox_data->reportText(
 		'li',
 		$old_tag['ModuleSID'] . " - " . $old_tag['Title'] . " added to table"
 	);
@@ -246,7 +220,7 @@ $wp2ox_data->tags = $wp2ox_tag_array;
  *
  * Time to start iterating through the articles
  */
-reportText( 'h3', "Importing Articles");
+$wp2ox_data->reportText( 'h3', "Importing Articles");
 
 // The SQL
 $wp2ox_article_sql = 'Select * FROM ' . $wp2ox_data->brand . '_articles_Old';
@@ -265,10 +239,12 @@ foreach ( $old_article_data as $old_article ) {
 	// Tags
 	$oxc_postTags       = new wp2ox_tag( $old_article['Taxonomy'], $wp2ox_data->tags );
 
+	$body_copy = mb_convert_encoding( $old_article['Body Copy'], 'UTF-8' );
+
 	// Post Data
 	$new_post = array(
 		// The full text of the post.
-		'post_content'   => mb_convert_encoding( $old_article['Body Copy'], 'UTF-8' ),
+		'post_content'   => $body_copy,
 		// The name (slug) for your post
 		'post_name'      => sanitize_title_with_dashes( $old_article['Title'] ),
 		// The title of your post.
@@ -292,7 +268,9 @@ foreach ( $old_article_data as $old_article ) {
 	// Create Post
 	$import = wp_insert_post( $new_post, true );
 	if ( $import ) {
-		reportText( 'p', "Post Number: $postNumber added successfully");
+		$wp2ox_data->reportText( 'p', "Post Number: $postNumber added successfully");
 		$postNumber++;
 	}
 }
+
+$wp2ox_data->reportText( 'h2', "Import complete. $postnumber posts added to database.");

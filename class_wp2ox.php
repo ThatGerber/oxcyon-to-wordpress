@@ -86,6 +86,32 @@ class wp2ox {
 		// return row data
 		return $pdoObject->fetchAll( PDO::FETCH_ASSOC );
 	}
+
+	static function strip_html_tags( $text ) {
+		$text = preg_replace(
+			[
+				'@<head[^>]*?>.*?</head>@siu',
+				'@<style[^>]*?>.*?</style>@siu',
+				'@<title[^>]*?>.*?</title>@siu',
+				'@<script[^>]*?.*?</script>@siu',
+				'@<object[^>]*?.*?</object>@siu',
+				'@<embed[^>]*?.*?</embed>@siu',
+				'@<applet[^>]*?.*?</applet>@siu',
+				'@<noframes[^>]*?.*?</noframes>@siu',
+				'@<noscript[^>]*?.*?</noscript>@siu',
+				'@<noembed[^>]*?.*?</noembed>@siu',
+				"/class\s*=\s*'[^\']*[^\']*'/"
+			],
+			array('', '', '', '', '', '', '', '', '', '', ''),
+			$text );
+
+		return $text;
+	}
+
+
+	static function reportText( $stringH, $string ) {
+		echo '<' . $stringH . '>' . $string . '</' . $stringH . '>';
+	}
 }
 
 /** Other Classes */

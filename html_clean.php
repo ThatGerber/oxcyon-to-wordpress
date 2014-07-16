@@ -32,7 +32,10 @@ $config = array(
     "DocType"           => "omit",
     "drop-font-tags"    => true,
     "drop-proprietary-attributes" => true,
+	"join-classes" => true,
+	"merge-divs" => true,
     "merge-spans" => true,
+	"show-body-only" => true,
     "word-2000" => true,
 );
 $find[] = '<span>';     // No Spans
