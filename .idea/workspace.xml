@@ -25,23 +25,11 @@
     <splitter split-orientation="horizontal" split-proportion="0.34062004">
       <split-first>
         <leaf>
-          <file leaf-file-name="index.php" pinned="false" current="false" current-in-tab="false">
+          <file leaf-file-name="index.php" pinned="false" current="true" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/index.php">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="241" column="75" selection-start="7745" selection-end="7745" vertical-scroll-proportion="-27.846153" vertical-offset="3373" max-vertical-offset="4777">
+                <state line="298" column="1" selection-start="11092" selection-end="11092" vertical-scroll-proportion="1.3266718" vertical-offset="3340" max-vertical-offset="5202">
                   <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="html_clean.php" pinned="false" current="true" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/html_clean.php">
-              <provider selected="true" editor-type-id="text-editor">
-                <state line="37" column="29" selection-start="999" selection-end="999" vertical-scroll-proportion="-0.1634981" vertical-offset="844" max-vertical-offset="2159">
-                  <folding>
-                    <marker date="1405528434000" expanded="true" signature="579:653" placeholder="SELECT ID, p..wp_posts..." />
-                    <marker date="1405528434000" expanded="true" signature="3448:3507" placeholder="UPDATE wp_po..." />
-                  </folding>
                 </state>
               </provider>
             </entry>
@@ -52,28 +40,28 @@
         <splitter split-orientation="horizontal" split-proportion="0.5">
           <split-first>
             <leaf>
-              <file leaf-file-name="class_wp2ox.php" pinned="false" current="false" current-in-tab="true">
+              <file leaf-file-name="class_wp2ox.php" pinned="false" current="false" current-in-tab="false">
                 <entry file="file://$PROJECT_DIR$/class_wp2ox.php">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state line="89" column="35" selection-start="1663" selection-end="1678" vertical-scroll-proportion="0.63802284" vertical-offset="504" max-vertical-offset="2176">
+                    <state line="107" column="46" selection-start="2118" selection-end="2118" vertical-scroll-proportion="-39.884617" vertical-offset="612" max-vertical-offset="1989">
                       <folding />
                     </state>
                   </provider>
                 </entry>
               </file>
-              <file leaf-file-name="class_wp2ox_dal.php" pinned="false" current="false" current-in-tab="false">
+              <file leaf-file-name="class_wp2ox_format.php" pinned="false" current="false" current-in-tab="false">
+                <entry file="file://$PROJECT_DIR$/class_wp2ox_format.php">
+                  <provider selected="true" editor-type-id="text-editor">
+                    <state line="86" column="57" selection-start="1887" selection-end="1887" vertical-scroll-proportion="-49.692307" vertical-offset="0" max-vertical-offset="2482">
+                      <folding />
+                    </state>
+                  </provider>
+                </entry>
+              </file>
+              <file leaf-file-name="class_wp2ox_dal.php" pinned="false" current="false" current-in-tab="true">
                 <entry file="file://$PROJECT_DIR$/class_wp2ox_dal.php">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state line="18" column="0" selection-start="322" selection-end="322" vertical-scroll-proportion="0.0" vertical-offset="306" max-vertical-offset="1258">
-                      <folding />
-                    </state>
-                  </provider>
-                </entry>
-              </file>
-              <file leaf-file-name="import_oxcyon.php" pinned="false" current="false" current-in-tab="false">
-                <entry file="file://$PROJECT_DIR$/import_oxcyon.php">
-                  <provider selected="true" editor-type-id="text-editor">
-                    <state line="145" column="67" selection-start="5101" selection-end="5101" vertical-scroll-proportion="-93.5" vertical-offset="0" max-vertical-offset="3162">
+                    <state line="33" column="0" selection-start="650" selection-end="650" vertical-scroll-proportion="0.2975647" vertical-offset="0" max-vertical-offset="1314">
                       <folding />
                     </state>
                   </provider>
@@ -92,19 +80,19 @@
                   </provider>
                 </entry>
               </file>
-              <file leaf-file-name="class_wp2ox_author.php" pinned="false" current="false" current-in-tab="true">
+              <file leaf-file-name="class_wp2ox_author.php" pinned="false" current="false" current-in-tab="false">
                 <entry file="file://$PROJECT_DIR$/class_wp2ox_author.php">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state line="14" column="19" selection-start="292" selection-end="292" vertical-scroll-proportion="0.1809886" vertical-offset="0" max-vertical-offset="1315">
+                    <state line="14" column="19" selection-start="292" selection-end="292" vertical-scroll-proportion="-9.153846" vertical-offset="0" max-vertical-offset="867">
                       <folding />
                     </state>
                   </provider>
                 </entry>
               </file>
-              <file leaf-file-name="class_wp2ox_category.php" pinned="false" current="false" current-in-tab="false">
+              <file leaf-file-name="class_wp2ox_category.php" pinned="false" current="false" current-in-tab="true">
                 <entry file="file://$PROJECT_DIR$/class_wp2ox_category.php">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state line="46" column="1" selection-start="1244" selection-end="1244" vertical-scroll-proportion="0.0" vertical-offset="782" max-vertical-offset="884">
+                    <state line="46" column="1" selection-start="1244" selection-end="1244" vertical-scroll-proportion="0.5951294" vertical-offset="0" max-vertical-offset="1314">
                       <folding />
                     </state>
                   </provider>
@@ -149,6 +137,7 @@
         <option value="$PROJECT_DIR$/class_wp2ox_author.php" />
         <option value="$PROJECT_DIR$/html_clean.php" />
         <option value="$PROJECT_DIR$/class_wp2ox.php" />
+        <option value="$PROJECT_DIR$/class_wp2ox_format.php" />
         <option value="$PROJECT_DIR$/index.php" />
       </list>
     </option>
@@ -185,6 +174,7 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -205,15 +195,14 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="options.lastSelected" value="File.Encoding" />
+    <property name="options.lastSelected" value="web-ide.project.structure" />
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../wordpress" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="ignore_missing_gitignore" value="true" />
   </component>
@@ -312,16 +301,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/html_clean.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="8" column="29" selection-start="141" selection-end="141" vertical-scroll-proportion="0.0" vertical-offset="793" max-vertical-offset="2108">
-          <folding>
-            <marker date="1405528434000" expanded="true" signature="579:653" placeholder="SELECT ID, p..wp_posts..." />
-            <marker date="1405528434000" expanded="true" signature="3448:3507" placeholder="UPDATE wp_po..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/class_wp2ox.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="52" column="21" selection-start="948" selection-end="948" vertical-scroll-proportion="0.0" vertical-offset="589" max-vertical-offset="1904">
@@ -332,13 +311,6 @@
     <entry file="file://$PROJECT_DIR$/class_wp2ox_dal.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="18" column="0" selection-start="322" selection-end="322" vertical-scroll-proportion="0.0" vertical-offset="306" max-vertical-offset="1258">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/import_oxcyon.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="145" column="67" selection-start="5101" selection-end="5101" vertical-scroll-proportion="0.0" vertical-offset="2465" max-vertical-offset="3196">
           <folding />
         </state>
       </provider>
@@ -371,13 +343,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/import_oxcyon.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="33" column="70" selection-start="1033" selection-end="1099" vertical-scroll-proportion="0.0" vertical-offset="561" max-vertical-offset="3179">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/class_wp2ox_dal.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="68" column="1" selection-start="1267" selection-end="1267" vertical-scroll-proportion="0.0" vertical-offset="1156" max-vertical-offset="1258">
@@ -395,13 +360,6 @@
     <entry file="file://$PROJECT_DIR$/class_wp2ox.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="107" column="56" selection-start="2038" selection-end="2038" vertical-scroll-proportion="0.0" vertical-offset="1819" max-vertical-offset="3859">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/import_oxcyon.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="33" column="70" selection-start="1033" selection-end="1099" vertical-scroll-proportion="0.0" vertical-offset="561" max-vertical-offset="3179">
           <folding />
         </state>
       </provider>
@@ -427,13 +385,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/import_oxcyon.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="33" column="70" selection-start="1033" selection-end="1099" vertical-scroll-proportion="0.0" vertical-offset="561" max-vertical-offset="3179">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/class_wp2ox_dal.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="68" column="1" selection-start="1267" selection-end="1267" vertical-scroll-proportion="0.0" vertical-offset="1156" max-vertical-offset="1258">
@@ -451,13 +402,6 @@
     <entry file="file://$PROJECT_DIR$/class_wp2ox.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="107" column="56" selection-start="2038" selection-end="2038" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4029">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/import_oxcyon.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="28" column="16" selection-start="840" selection-end="840" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3179">
           <folding />
         </state>
       </provider>
@@ -490,23 +434,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/import_oxcyon.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="28" column="16" selection-start="840" selection-end="840" vertical-scroll-proportion="0.0" vertical-offset="476" max-vertical-offset="3145">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/index.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="66" column="1" selection-start="1851" selection-end="1851" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2244">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/import_oxcyon.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="28" column="16" selection-start="840" selection-end="840" vertical-scroll-proportion="0.0" vertical-offset="476" max-vertical-offset="3179">
           <folding />
         </state>
       </provider>
@@ -518,48 +448,16 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/import_oxcyon.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="28" column="16" selection-start="840" selection-end="840" vertical-scroll-proportion="0.0" vertical-offset="476" max-vertical-offset="3179">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Import_functions.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="0" selection-start="228" selection-end="228" vertical-scroll-proportion="0.16818874" vertical-offset="0" max-vertical-offset="1314" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/import_categories.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="0" selection-start="384" selection-end="384" vertical-scroll-proportion="0.20906995" vertical-offset="0" max-vertical-offset="1301" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/import_articles.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="35" selection-start="338" selection-end="338" vertical-scroll-proportion="0.16986933" vertical-offset="0" max-vertical-offset="1309" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Import_functions_removed.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="190" column="19" selection-start="5052" selection-end="5052" vertical-scroll-proportion="0.8964992" vertical-offset="2052" max-vertical-offset="3366" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1341" />
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1341">
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/class_wp2ox_select_query.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="14" column="7" selection-start="277" selection-end="277" vertical-scroll-proportion="0.0" vertical-offset="238" max-vertical-offset="1054">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/class_wp2ox_dal.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="0" selection-start="322" selection-end="322" vertical-scroll-proportion="0.0" vertical-offset="306" max-vertical-offset="1258">
           <folding />
         </state>
       </provider>
@@ -571,48 +469,45 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/class_wp2ox_category.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="46" column="1" selection-start="1244" selection-end="1244" vertical-scroll-proportion="0.0" vertical-offset="782" max-vertical-offset="884">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/class_wp2ox_author.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="19" selection-start="292" selection-end="292" vertical-scroll-proportion="0.1809886" vertical-offset="0" max-vertical-offset="1315">
+        <state line="14" column="19" selection-start="292" selection-end="292" vertical-scroll-proportion="-9.153846" vertical-offset="0" max-vertical-offset="867">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/import_oxcyon.php">
+    <entry file="file://$PROJECT_DIR$/class_wp2ox_category.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="145" column="67" selection-start="5101" selection-end="5101" vertical-scroll-proportion="-93.5" vertical-offset="0" max-vertical-offset="3162">
+        <state line="46" column="1" selection-start="1244" selection-end="1244" vertical-scroll-proportion="0.5951294" vertical-offset="0" max-vertical-offset="1314">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/class_wp2ox.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="89" column="35" selection-start="1663" selection-end="1678" vertical-scroll-proportion="0.63802284" vertical-offset="504" max-vertical-offset="2176">
+        <state line="107" column="46" selection-start="2118" selection-end="2118" vertical-scroll-proportion="-39.884617" vertical-offset="612" max-vertical-offset="1989">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/class_wp2ox_format.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="86" column="57" selection-start="1887" selection-end="1887" vertical-scroll-proportion="-49.692307" vertical-offset="0" max-vertical-offset="2482">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/class_wp2ox_dal.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="33" column="0" selection-start="650" selection-end="650" vertical-scroll-proportion="0.2975647" vertical-offset="0" max-vertical-offset="1314">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/index.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="241" column="75" selection-start="7745" selection-end="7745" vertical-scroll-proportion="-27.846153" vertical-offset="3373" max-vertical-offset="4777">
+        <state line="298" column="1" selection-start="11092" selection-end="11092" vertical-scroll-proportion="1.3266718" vertical-offset="3340" max-vertical-offset="5202">
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/html_clean.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="37" column="29" selection-start="999" selection-end="999" vertical-scroll-proportion="-0.1634981" vertical-offset="844" max-vertical-offset="2159">
-          <folding>
-            <marker date="1405528434000" expanded="true" signature="579:653" placeholder="SELECT ID, p..wp_posts..." />
-            <marker date="1405528434000" expanded="true" signature="3448:3507" placeholder="UPDATE wp_po..." />
-          </folding>
         </state>
       </provider>
     </entry>

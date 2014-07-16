@@ -1,14 +1,25 @@
 <?php
+header('Content-type: text/html; charset=utf-8');
 /**
  * Oxcyon to WordPress
  */
-$import_folder = dirname( __FILE__ );
 
+$import_folder = dirname( __FILE__ );
+/** Required to load WordPress */
 require_once( ABSPATH . '/wp-load.php');
 
+/** The main class and sub / extended classes */
 include( $import_folder . "/class_wp2ox.php");
 
+/**
+ * $wp2ox_data is the reference object used throughout the import. It'll hold various reference
+ * arrays and other information used to by other classes. It also holds static functions needed
+ * at various times.
+ *
+ * @var object $wp2ox_data
+ */
 $wp2ox_data            = new wp2ox;
+
 /**
  * Update brand and category ID Value with each import
  *
@@ -37,7 +48,10 @@ $wp2ox_dbh->database   = 'beverage_old';
 /**
  * # AUTHORS #
  *
- * Let's create our new Authors
+ * To import the authors, not much has to be done to the physical data. The data is just
+ * lined up to match with the wordpress wp_insert_user() function. The wp_insert_user()
+ * function will return an ID for that author. The ID is then matched up with the old,
+ * Oxcyon ID and stored in the wp2ox_data object.
  *
  * *SQL*
  * First we set up the SQL statement. this calls the brand to target the author's table.
@@ -65,7 +79,7 @@ $oxc_authors = new wp2ox_select_query( $wp2ox_dbh, $wp2ox_author_sql );
 $oxc_authorData = $oxc_authors->queryResults(); // query results
 $wp2ox_data->reportText( 'h3', 'Adding New Users and creating Author reference table');
 
-// Author reference data
+// Author Reference Array
 $wp2ox_author_array = array();
 
 // The Import
@@ -76,7 +90,7 @@ foreach ( $oxc_authorData as $author ) {
 	$author_displayName = $author['Full Name'];
 	$author_firstName = $author['First Name'];
 	$author_lastName = $author['Last Name'];
-	$author_description = $author['Bio'];
+	$author_description = wp_strip_all_tags( $author['Bio'] );
 	$registerDate = date("Y-m-d H:i:s", strtotime($author['StartDate']));
 	// Creating new author
 	$newAuthor = array(
@@ -105,13 +119,12 @@ echo '</ul>';
 // Push array of data to object
 $wp2ox_data->authors = $wp2ox_author_array;
 
-// Close the handle
-//unset( $oxc_authors );
-
 /**
  * # CATEGORIES #
  *
- * Importing the categories.
+ * Importing the categories run much the same was importing the authors. The data is pulled
+ * and matched up to import into the wp_create_category() function. The function returns a
+ * category ID and that is matched with the old ID and stored in the wp2ox_data object
  *
  * *SQL*
  * First we set up the SQL statement. this calls the brand to target the author's table.
@@ -143,7 +156,7 @@ $wp2ox_category_sql = 'SELECT ModuleSID, Title
 $oxc_categories = new wp2ox_select_query( $wp2ox_dbh, $wp2ox_category_sql );
 $oxc_category_data = $oxc_categories->queryResults( $wp2ox_data->category_value );
 
-// Reference arrays
+// Category Reference Array
 $wp2ox_category_array = array();
 
 // The Import
@@ -164,7 +177,9 @@ $wp2ox_data->categories = $wp2ox_category_array;
 /************************************************************************************
  * # TAGS #
  *
- * Importing the tags next.
+ * Importing the tags next. Because tags are imported on a "per post" basis, this step is
+ * mainly executed in order to create the reference array that is called in a later function.
+ * The data will be referenced during the post import.
  *
  * *SQL*
  * First we set up the SQL statement. this calls the brand to target the author's table.
@@ -213,12 +228,33 @@ foreach ( $oxc_tag_data as $old_tag ) {
 }
 echo '</ul>';
 
+// Store the Reference
 $wp2ox_data->tags = $wp2ox_tag_array;
 
 /************************************************************************************
- * 4. ARTICLES
+ * # ARTICLES #
  *
- * Time to start iterating through the articles
+ * This will do the hard work matching articles to their necessary information.
+ *
+ * *SQL*
+ * The SQL statement grabs all of the data from the articles table and returns it as an
+ * associative array.
+ *
+ * *Query*
+ * The query pulls that array from the object and prepares it for the foreach() statement.
+ *
+ * *Import*
+ * Each import takes a bit of time. The length of time the script needs to run depends on
+ * how many articles we're importing into the database.
+ *
+ * Unique classes have been created to handle the information for each part of the post:
+ * Author, category, and tags.
+ *
+ * The Body content is handled in a unique way. Because of all of the mis-formatted
+ * information, it runs through a modified PHP Tidy class to clean up bad tags and prepare
+ * the content to be used on the site. It takes a poorly formatted string and returns it
+ * as a properly formatted HTML doc, stripping bad tags and non-"WordPress Post" content.
+ *
  */
 $wp2ox_data->reportText( 'h3', "Importing Articles");
 
@@ -232,45 +268,34 @@ $old_article_data = $old_articles->queryResults();
 // The Import
 $postNumber = 1; // iterate the query
 foreach ( $old_article_data as $old_article ) {
-	// Author
+	// Post Author
 	$oxc_postAuthor     = new wp2ox_author( $old_article['Author'], $wp2ox_data->authors );
-	// Categories
+	// Post Categories
 	$oxc_postCategories = new wp2ox_category( $old_article['Taxonomy'], $wp2ox_data->categories );
-	// Tags
+	// Post Tags
 	$oxc_postTags       = new wp2ox_tag( $old_article['Taxonomy'], $wp2ox_data->tags );
-
-	$body_copy = mb_convert_encoding( $old_article['Body Copy'], 'UTF-8' );
-
-	// Post Data
+	// Post Content
+	$body_copy          = new wp2ox_tidy( mb_convert_encoding( $old_article['Body Copy'], 'UTF-8' ) );
+	// The New Post
 	$new_post = array(
-		// The full text of the post.
-		'post_content'   => $body_copy,
-		// The name (slug) for your post
-		'post_name'      => sanitize_title_with_dashes( $old_article['Title'] ),
-		// The title of your post.
-		'post_title'     => sanitize_title( $old_article['Title'] ),
-		// will need to import to a table
-		// The user ID number of the author. Default is the current user ID.
-		'post_author'    => intval( $oxc_postAuthor ),
-		// For all your post excerpt needs.
-		'post_excerpt'   => wp_strip_all_tags( mb_convert_encoding( $old_article['Deck'], 'UTF-8' ) ),
-		// The time post was made.
-		'post_date'      => date("Y-m-d H:i:s", strtotime($old_article['StartDate'])),
-		// The time post was made, in GMT.
-		'post_date_gmt'  => date("Y-m-d H:i:s", strtotime( $old_article['StartDate'] ) - 1800 ),
-		// Default is the option 'default_comment_status', or 'closed'.
-		'comment_status' => 'open',
-		// Default empty. array( int, int, int )
-		'post_category'  => $oxc_postCategories,
-		// Default empty. 'tag, tag, tag'
-		'tags_input'     => $oxc_postTags
+		'post_content'   => $body_copy, // The full text of the post.
+		'post_name'      => sanitize_title_with_dashes( $old_article['Title'] ), // The name (slug) for your post
+		'post_title'     => sanitize_title( $old_article['Title'] ), // The title of your post.
+		'post_author'    => intval( $oxc_postAuthor ), // The user ID number of the author. Default is the current user ID.
+		'post_excerpt'   => wp_strip_all_tags( mb_convert_encoding( $old_article['Deck'], 'UTF-8' ) ), // For all your post excerpt needs.
+		'post_date'      => date("Y-m-d H:i:s", strtotime($old_article['StartDate'])), // The time post was made.
+		'post_date_gmt'  => date("Y-m-d H:i:s", strtotime( $old_article['StartDate'] ) - 1800 ), // The time post was made, in GMT.
+		'comment_status' => 'open', // Default is the option 'default_comment_status', or 'closed'.
+		'post_category'  => $oxc_postCategories, // Default empty. array( int, int, int )
+		'tags_input'     => $oxc_postTags // Default empty. 'tag, tag, tag'
 	);
 	// Create Post
 	$import = wp_insert_post( $new_post, true );
+	// If it imported, report and increment
 	if ( $import ) {
 		$wp2ox_data->reportText( 'p', "Post Number: $postNumber added successfully");
 		$postNumber++;
 	}
 }
-
+// It's done. Move along.
 $wp2ox_data->reportText( 'h2', "Import complete. $postnumber posts added to database.");

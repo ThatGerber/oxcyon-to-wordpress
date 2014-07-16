@@ -87,29 +87,14 @@ class wp2ox {
 		return $pdoObject->fetchAll( PDO::FETCH_ASSOC );
 	}
 
-	static function strip_html_tags( $text ) {
-		$text = preg_replace(
-			[
-				'@<head[^>]*?>.*?</head>@siu',
-				'@<style[^>]*?>.*?</style>@siu',
-				'@<title[^>]*?>.*?</title>@siu',
-				'@<script[^>]*?.*?</script>@siu',
-				'@<object[^>]*?.*?</object>@siu',
-				'@<embed[^>]*?.*?</embed>@siu',
-				'@<applet[^>]*?.*?</applet>@siu',
-				'@<noframes[^>]*?.*?</noframes>@siu',
-				'@<noscript[^>]*?.*?</noscript>@siu',
-				'@<noembed[^>]*?.*?</noembed>@siu',
-				"/class\s*=\s*'[^\']*[^\']*'/"
-			],
-			array('', '', '', '', '', '', '', '', '', '', ''),
-			$text );
-
-		return $text;
-	}
-
-
+	/**
+	 * Prints the information. Wraps it in whatever you tell it to wrap in.
+	 *
+	 * @param $stringH string element tag, no brackets
+	 * @param $string string String to wrap in brackets.
+	 */
 	static function reportText( $stringH, $string ) {
+
 		echo '<' . $stringH . '>' . $string . '</' . $stringH . '>';
 	}
 }
@@ -118,6 +103,9 @@ class wp2ox {
 
 // Database abstraction layer
 include( $import_folder . "/class_wp2ox_dal.php");
+
+// Tidy
+include( $import_folder . "/class_wp2ox_format.php");
 
 // Server queries - To fold into DAL
 include( $import_folder . "/class_wp2ox_select_query.php");
@@ -128,5 +116,6 @@ include( $import_folder . "/class_wp2ox_author.php");
 // Tag Creator
 include( $import_folder . "/class_wp2ox_tag.php");
 
-//include( $import_folder . "/class_wp2ox_category.php");
+// Category
+include( $import_folder . "/class_wp2ox_category.php");
 
