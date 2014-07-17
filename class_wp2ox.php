@@ -72,9 +72,6 @@ class wp2ox {
 		$this->options        = $option_group;
 		$this->brand          = $option_group['brand'];
 		$this->category_value = $option_group['category_value'];
-		$this->dbusername     = $option_group['db_user'];
-		$this->dbpassword     = $option_group['db_pass'];
-		$this->database       = $option_group['db_name'];
 	}
 
 	/**
@@ -128,9 +125,10 @@ include( $import_folder . "/class_wp2ox_format.php");
 // Author/Category creator
 include( $import_folder . "/class_wp2ox_author.php");
 
+// Category
+include( $import_folder . "/class_wp2ox_category.php");
+
 // Tag Creator
 include( $import_folder . "/class_wp2ox_tag.php");
 
-// Category
-include( $import_folder . "/class_wp2ox_category.php");
 

@@ -16,7 +16,15 @@
  *
  * Holds data and references for transferring between Wordpress and Oxcyon.
  */
-class wp2ox_tidy extends tidy {
+
+if ( ! extension_loaded('tidy') ) {
+
+	echo "Tidy Extension not loaded.";
+	die();
+
+} else {
+
+class wp2ox_tidy extends Tidy {
 
 	/**
 	 * @var array Configuration for Tidy
@@ -148,3 +156,4 @@ class wp2ox_tidy extends tidy {
 
 }
 
+}

@@ -46,7 +46,17 @@ class wp2ox_dal extends wp2ox {
 	/** Import the settings */
 	public function __construct() {
 
-		parent::set_variables( get_option( 'wp2ox_settings' ) );
+		$this->set_import_variables( get_option( 'wp2ox_settings' ) );
+
+	}
+
+	private function set_import_variables($option_group) {
+		$this->options        = $option_group;
+		$this->dbusername     = $option_group['db_user'];
+		$this->dbpassword     = $option_group['db_pass'];
+		$this->database       = $option_group['db_name'];
+		$this->searchVal      = $option_group['category_value'];
+
 
 	}
 
@@ -87,7 +97,7 @@ class wp2ox_dal extends wp2ox {
 				$this->stmt->bindParam(':value', $this->searchVal);
 			}
 
-			$this->stmt = $this->stmt->execute();
+			$this->stmt->execute();
 
 			return TRUE;
 		}

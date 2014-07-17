@@ -1,5 +1,4 @@
 <?php
-header('Content-type: text/html; charset=utf-8');
 /**
  * Oxcyon to WordPress
  */
@@ -131,7 +130,7 @@ class wp2ox_import {
 	 */
 
 	public function import_authors() {
-		wp2ox::reportText( 'h3', 'Adding New Users and creating Author reference table');
+		wp2ox::reportText( 'h3', 'Adding New Users.');
 
 		// The Import
 		echo '<ul>';
