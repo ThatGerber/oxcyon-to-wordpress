@@ -19,7 +19,7 @@
 class wp2ox {
 
 
-	public $options;
+	private $options;
 
 	/**
 	 * @var $brand string Which brand is being worked with.
@@ -30,6 +30,8 @@ class wp2ox {
 	 * @var $category_value string "Like" string for database search
 	 */
 	public $category_value;
+
+	protected $reference_array;
 
 	/**
 	 * Author reference array.
@@ -53,18 +55,17 @@ class wp2ox {
 	public $tags;
 
 	/**
-	 * PDO connection
-	 * @param $dbh
+	 * Number of posts imported
+	 *
+	 * @var string $tags number of posts imported
 	 */
-	private $dbh;
+	public $postNumber;
 
+	/**
+	 * Import the user settings and set up the object.
+	 */
 	function __construct() {
 		$this->set_variables( get_option( 'wp2ox_settings' ) );
-	}
-
-	/** Sets the PDO */
-	public function set_dbh($dbh) {
-		$this->dbh = $dbh;
 	}
 
 	protected function set_variables( $option_group ) {
@@ -77,27 +78,31 @@ class wp2ox {
 	}
 
 	/**
-	 * Get Data from database
+	 * Adds a Reference Array
 	 *
-	 * @param $sql
-	 * @param $value
+	 * Creates a nested array of reference data. To be used to query later on when importing articles.
+	 *
+	 * @param $name string|int Name of array to store it in.
+	 * @param $val1 string|int Key to store
+	 * @param $val2 string|int Value to store
+	 */
+	public function add_reference($name, $val1, $val2) {
+
+		$array = $this->reference_array[$name];
+		$array[ $val1 ] = $val2;
+
+	}
+
+	/**
+	 * Returns a reference array stored through add_reference
+	 *
+	 * @param $name string Name of array requested
+	 *
 	 * @return array
 	 */
-	public function getData( $sql, $value = null ) {
-		// create array for search value
-		// establish database connection
-		$pdo = $this->dbh;
-		// prepare database call
-		$pdoObject  = $pdo->prepare( $sql );
-		// check for errors
-		if (!$pdoObject) {
-			echo "\nPDO::errorInfo():\n";
-			print_r($pdo->errorInfo());
-		}
-		// execute the database call
-		$pdoObject->execute( $value );
-		// return row data
-		return $pdoObject->fetchAll( PDO::FETCH_ASSOC );
+	public function get_reference_array($name) {
+
+		return $this->reference_array[$name];
 	}
 
 	/**
@@ -119,9 +124,6 @@ include( $import_folder . "/class_wp2ox_dal.php");
 
 // Tidy
 include( $import_folder . "/class_wp2ox_format.php");
-
-// Server queries - To fold into DAL
-include( $import_folder . "/class_wp2ox_select_query.php");
 
 // Author/Category creator
 include( $import_folder . "/class_wp2ox_author.php");

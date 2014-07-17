@@ -13,6 +13,12 @@
 
 class wp2ox_dal extends wp2ox {
 
+	/** Search Val */
+	public $searchVal;
+
+	/** @var array Contains WordPress option */
+	private $options;
+
 	/**
 	 * @var string $dbusername Username to access the database
 	 */
@@ -34,60 +40,64 @@ class wp2ox_dal extends wp2ox {
 	 */
 	private $pdo;
 
-	/** @var $stmt object  */
+	/** @var $stmt object Prepared statement */
 	private $stmt;
 
-	/**
-	 * @var string $sql SQL statement
-	 */
-	//public $sql;
+	/** Import the settings */
+	public function __construct() {
 
-	/** Search Val */
-
-	public $searchVal;
-
-	public function __construct($pdo) {
 		parent::set_variables( get_option( 'wp2ox_settings' ) );
-		$this->pdo = $pdo;
-		//$this->sql = $sql;
+
 	}
 
-	public function categories ( $brand, $cat_value ) {
-		$sql = 'SELECT ModuleSID, Title
-    		FROM ' . $brand . '_Taxonomy_old
-    		WHERE Parent
-    		LIKE :value';
-		$value = array(":value" => $cat_value);
-
-		return $this->query($sql, $value);
-	}
-
-	public function results_array( $table ) {
-
-		$this->queryResults( $this->searchVal );
+	/**
+	 * Returns an associative array of searched data.
+	 *
+	 * @return mixed
+	 */
+	public function results_array() {
 
 		return $this->stmt->fetchAll( PDO::FETCH_ASSOC );
 	}
 
-	public function queryResults( $searchVal = null ) {
+	/**
+	 * Sets query results into a variable usable by certain functions.
+	 *
+	 * Executes SQL with a search val, if relevant, and sets the values to be used and pulled into associative array
+	 * or other method.
+	 *
+	 * @param string      $query     Type of query to call.
+	 * @param string|null $searchVal String to search for
+	 *
+	 * @return bool
+	 */
+	public function queryResults( $query, $searchVal = null ) {
 
-		if ( $searchVal !== null ) {
+		if ( $searchVal !== null && $this->searchVal !== null ) {
 			$this->searchVal = $searchVal;
 		}
 
-		$this->stmt = $this->pdo->prepare( $this->sql );
+		$sql = $this->sql_statement( $query );
 
-		if ( $searchVal ) {
-			$this->stmt->bindParam(':value', $this->searchVal);
+		if ( $this->pdo = $this->connect() ) {
+
+			$this->stmt = $this->pdo->prepare( $sql );
+
+			if ( $this->searchVal ) {
+				$this->stmt->bindParam(':value', $this->searchVal);
+			}
+
+			$this->stmt = $this->stmt->execute();
+
+			return TRUE;
 		}
 
-		$this->stmt = $this->stmt->execute();
-
-		return TRUE;
+		return FALSE;
 	}
 
-
-
+	/**
+	 * Returns true if the data was updated in the database.
+	 */
 	public function updated() {
 		if ( $this->stmt->rowCount() >= 1) {
 
@@ -98,12 +108,41 @@ class wp2ox_dal extends wp2ox {
 		}
 	}
 
+	/**
+	 * @param string $name Name of SQL Statement to run.
+	 *
+	 * @return bool|string Returns an SQL statement if it was a valid statement to query, or false if it was stupid.
+ 	 */
+	private function sql_statement( $name ) {
+
+		$array = array(
+			'Articles'   => 'Select * FROM ' . $this->options["articles_table"],
+			'Authors'    => 'SELECT * FROM ' . $this->options["author_table"],
+			'Categories' => 'SELECT ModuleSID, Title FROM ' . $this->options["taxonomy_table"] . ' WHERE Parent LIKE :value',
+			'Tags'       => 'SELECT ModuleSID, Title FROM ' . $this->options["taxonomy_table"],
+		);
+
+		if ( array_key_exists( $name, $array ) ) {
+
+			return $array["$name"];
+		}
+
+		return FALSE;
+
+	}
+
+	/**
+	 * Creates a PDO connect to database
+	 *
+	 * @return PDO|string Returns an error if the connection fails, or PDO on success.
+	 */
 	private function connect() {
 
 		try {
 			$new_pdo = new PDO(
 				"mysql:host=localhost;", $this->dbusername, $this->dbpassword);
 		} catch ( Exception $oxc_e ) {
+
 			return $oxc_e->getMessage();
 		}
 
@@ -113,20 +152,72 @@ class wp2ox_dal extends wp2ox {
 		return $new_pdo;
 	}
 
-	private function query( $sql, $search_val = NULL ) {
-		$dbh = $this->connect();
+	/**
+	 * Returns array of all author data
+	 *
+	 * Gets all of the author data from the database, returns it to a variable
+	 *
+	 * @return mixed|null Array on success, NULL if no data available.
+	 */
+	public function get_authors() {
 
-		if ( isset( $sql ) ) {
-			$data = $dbh->prepare($sql);
-		} else {
-			return FALSE;
-		}
-		if ( isset( $search_val ) ) {
-			$data->execute( $search_val );
-		} else {
-			$data->execute();
+		if ( $this->queryResults('Authors') == TRUE ) {
+
+			return $this->results_array();
 		}
 
-		return $data->fetchAll( PDO::FETCH_ASSOC );
+		return NULL;
 	}
+
+	/**
+	 * Returns array of all Category data
+	 *
+	 * Gets all of the category data from the database, returns it to a variable
+	 *
+	 * @return mixed|null Array on success, NULL if no data available.
+	 */
+	public function get_categories ( ) {
+
+		if ( $this->queryResults('Categories', $this->searchVal ) == TRUE ) {
+
+			return $this->results_array();
+		}
+
+		return NULL;
+	}
+
+	/**
+	 * Returns array of all article data
+	 *
+	 * Gets all of the article data from the database, returns it to a variable
+	 *
+	 * @return mixed|null Array on success, NULL if no data available.
+	 */
+	public function get_articles ( ) {
+
+		if ( $this->queryResults('Articles') == TRUE ) {
+
+			return $this->results_array();
+		}
+
+		return NULL;
+	}
+
+	/**
+	 * Returns array of all tag data
+	 *
+	 * Gets all of the tag data from the database, returns it to a variable
+	 *
+	 * @return mixed|null Array on success, NULL if no data available.
+	 */
+	public function get_tags ( ) {
+
+		if ( $this->queryResults('Tags') == TRUE ) {
+
+			return $this->results_array();
+		}
+
+		return NULL;
+	}
+
 }

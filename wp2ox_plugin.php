@@ -32,12 +32,15 @@ class wp2ox_settings_page {
 	 */
 	private $options;
 
+	private $plugin_folder;
+
 	/**
 	 * Start up
 	 */
 	public function __construct() {
 		add_action( 'admin_menu', array( $this, 'add_management_page' ) );
 		add_action( 'admin_init', array( $this, 'page_init' ) );
+		$this->plugin_folder = dirname( __FILE__ );
 	}
 
 	/**
@@ -59,6 +62,7 @@ class wp2ox_settings_page {
 	public function wp2ox_admin_form () {
 
 		$this->options = get_option( 'wp2ox_settings' );
+		$import_script = $this->plugin_folder . '/wp2ox_import.php';
 
 		?>
 		<div class="wrap">
@@ -67,7 +71,7 @@ class wp2ox_settings_page {
 				Enter the necessary values below. After all of the fields have been set, press "Import" to run the
 				import script.
 			</p>
-			<form method="post" action="options.php">
+			<form method="post" action="<?php echo $import_script; ?>">
 				<?php
 				settings_fields( 'wp2ox-settings-group' );
 
@@ -79,6 +83,14 @@ class wp2ox_settings_page {
 				?>
 
 			</form>
+
+			<form method="post" action="">
+				<p class="submit">
+					<input type="submit" value="Import the Data" name="submit" class="button " />
+				</p>
+
+			</form>
+
 		</div>
 	<?php
 	}

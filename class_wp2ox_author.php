@@ -9,12 +9,21 @@
  * returns array
  */
 class wp2ox_author {
-    // source data for matching
-    protected $idArray = Array();
-    // old categories
-    protected $data;
-    // return data
-    protected $results;
+
+	/**
+	 * Source array
+	 * @var array
+	 */
+	protected $idArray;
+	/**
+	 * Check array
+	 * @var array
+	 */
+	protected $data;
+	/**
+	 * @var mixed
+	 */
+	protected $results;
 
     // Construct
     public function __construct( $data, $array ) {
