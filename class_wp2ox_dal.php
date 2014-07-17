@@ -13,11 +13,44 @@
 
 class wp2ox_dal extends wp2ox {
 
-	public $dbusername;
-	public $dbpassword;
-	public $database;
+	/**
+	 * @var string $dbusername Username to access the database
+	 */
+	private $dbusername;
 
-	public function __construct() {}
+	/**
+	 * @var string $dbpassword Password for that user.
+	 */
+	private $dbpassword;
+
+	/**
+	 * @var string $database Name of the database
+	 */
+	private $database;
+
+	/**
+	 * @var $pdo object PHP Database Object. Contains the database connection
+	 * used in the queries
+	 */
+	private $pdo;
+
+	/** @var $stmt object  */
+	private $stmt;
+
+	/**
+	 * @var string $sql SQL statement
+	 */
+	//public $sql;
+
+	/** Search Val */
+
+	public $searchVal;
+
+	public function __construct($pdo) {
+		parent::set_variables( get_option( 'wp2ox_settings' ) );
+		$this->pdo = $pdo;
+		//$this->sql = $sql;
+	}
 
 	public function categories ( $brand, $cat_value ) {
 		$sql = 'SELECT ModuleSID, Title
@@ -29,10 +62,40 @@ class wp2ox_dal extends wp2ox {
 		return $this->query($sql, $value);
 	}
 
-	public function results_array( $name ) {
+	public function results_array( $table ) {
+
+		$this->queryResults( $this->searchVal );
+
+		return $this->stmt->fetchAll( PDO::FETCH_ASSOC );
+	}
+
+	public function queryResults( $searchVal = null ) {
+
+		if ( $searchVal !== null ) {
+			$this->searchVal = $searchVal;
+		}
+
+		$this->stmt = $this->pdo->prepare( $this->sql );
+
+		if ( $searchVal ) {
+			$this->stmt->bindParam(':value', $this->searchVal);
+		}
+
+		$this->stmt = $this->stmt->execute();
+
+		return TRUE;
+	}
 
 
 
+	public function updated() {
+		if ( $this->stmt->rowCount() >= 1) {
+
+			return true;
+		} else {
+
+			return false;
+		}
 	}
 
 	private function connect() {

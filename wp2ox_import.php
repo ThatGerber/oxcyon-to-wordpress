@@ -18,20 +18,11 @@ include( $import_folder . "/class_wp2ox.php");
  *
  * @var object $wp2ox_data
  */
-$wp2ox_data            = new wp2ox;
+$wp2ox_data = new wp2ox;
 
 /**
- * Update brand and category ID Value with each import
- *
- * Brand is the three letter code for the brand that we're working with in the old data. It's
- * prepended to the table for reference to each item's data.
- *
- * cat_value is the SQL "Like" statement used to capture just the categories. It should be
- * surrounded by '%' in order to search within string's for categories. portion of ModuleSID
- * to matched for category - "Category" Value
  */
-$wp2ox_data->brand     = 'BDX';
-$wp2ox_data->category_value = "%AAAAAAAAAAAAAAAA%";
+
 
 /**
  * OLD DATABASE CONNECTION
@@ -75,6 +66,10 @@ $wp2ox_data->reportText( 'h3', 'Creating database connection to Author Table');
 $wp2ox_author_sql = 'SELECT * FROM ' . $wp2ox_data->brand . '_authors_old';
 
 // The Query
+/**
+ * $authors = $wp2ox_dbh->results_array('authors');
+ */
+
 $oxc_authors = new wp2ox_select_query( $wp2ox_dbh, $wp2ox_author_sql );
 $oxc_authorData = $oxc_authors->queryResults(); // query results
 $wp2ox_data->reportText( 'h3', 'Adding New Users and creating Author reference table');

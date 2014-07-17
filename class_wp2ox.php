@@ -18,6 +18,9 @@
  */
 class wp2ox {
 
+
+	public $options;
+
 	/**
 	 * @var $brand string Which brand is being worked with.
 	 */
@@ -56,11 +59,21 @@ class wp2ox {
 	private $dbh;
 
 	function __construct() {
+		$this->set_variables( get_option( 'wp2ox_settings' ) );
 	}
 
 	/** Sets the PDO */
 	public function set_dbh($dbh) {
 		$this->dbh = $dbh;
+	}
+
+	protected function set_variables( $option_group ) {
+		$this->options        = $option_group;
+		$this->brand          = $option_group['brand'];
+		$this->category_value = $option_group['category_value'];
+		$this->dbusername     = $option_group['db_user'];
+		$this->dbpassword     = $option_group['db_pass'];
+		$this->database       = $option_group['db_name'];
 	}
 
 	/**
