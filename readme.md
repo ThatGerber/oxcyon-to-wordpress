@@ -13,6 +13,14 @@ Move Oxcyon data into WordPress
 
 Plugin was developed to move an Oxcyon Centralpoint based website into WordPress.
 
+Currently will import:
+
+* Users
+* Categories
+* Tags
+* Articles
+
+Individual pages haven't been mapped yet.
 
 == Installation ==
 
