@@ -41,6 +41,8 @@ The import cannot be undone. MAKE SURE TO BACK UP YOUR DATABASE BEFORE RUNNING T
 # Questions? #
 If you have questions or would like to contribute, please contact me at www.chriswgerber.com.
 
+Check it out on Github: [Oxcyon to WordPress][github]
+
 == Installation ==
 
 1. Upload `plugin-name.php` to the `/wp-content/plugins/` directory
@@ -78,3 +80,5 @@ None yet.
 
 = 0.1.0 =
 * First release of the plugin.
+
+[github]: https://github.com/ThatGerber/oxcyon-to-wordpress/archive/master.zip "Oxcyon to WordPress - GitHub"
