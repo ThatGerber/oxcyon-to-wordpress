@@ -19,16 +19,18 @@ class wp2ox_tag extends wp2ox_category {
 	 */
 	public function __construct( $data, $array ) {
         parent::__construct($data, $array);
+
     }
 
-    protected function resultTerms( ) {
+    public function resultTerms( ) {
         // Start the loop
         foreach ( $this->data as $string ) {
             // see if a category matches
             $newTerm = $this->validateData( $string );
-            array_push( $newTerm, $this->results );
+            $this->results[] = $newTerm;
         }
-        $tagResults = explode( ', ', $this->results );
+        $tagResults = implode( ', ', $this->results );
+
         return $tagResults;
     }
 

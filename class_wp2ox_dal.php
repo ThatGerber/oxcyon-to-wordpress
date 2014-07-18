@@ -52,22 +52,12 @@ class wp2ox_dal extends wp2ox {
 
 	private function set_import_variables($option_group) {
 		$this->options        = $option_group;
-		$this->dbusername     = $option_group['db_user'];
-		$this->dbpassword     = $option_group['db_pass'];
+		$this->dbusername     = $option_group['db_username'];
+		$this->dbpassword     = $option_group['db_passpass'];
 		$this->database       = $option_group['db_name'];
 		$this->searchVal      = $option_group['category_value'];
 
 
-	}
-
-	/**
-	 * Returns an associative array of searched data.
-	 *
-	 * @return mixed
-	 */
-	public function results_array() {
-
-		return $this->stmt->fetchAll( PDO::FETCH_ASSOC );
 	}
 
 	/**
@@ -89,17 +79,23 @@ class wp2ox_dal extends wp2ox {
 
 		$sql = $this->sql_statement( $query );
 
+		wp2ox::reportText( 'code', "SQL Statement: " . $sql );
+
 		if ( $this->pdo = $this->connect() ) {
+
+			$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 			$this->stmt = $this->pdo->prepare( $sql );
 
-			if ( $this->searchVal ) {
-				$this->stmt->bindParam(':value', $this->searchVal);
+			if ( $this->searchVal !== null ) {
+				$this->stmt->bindParam(":value", $this->searchVal );
 			}
 
 			$this->stmt->execute();
 
-			return TRUE;
+			$results = $this->stmt->fetchAll( PDO::FETCH_ASSOC );
+
+			return $results;
 		}
 
 		return FALSE;
@@ -128,7 +124,7 @@ class wp2ox_dal extends wp2ox {
 		$array = array(
 			'Articles'   => 'Select * FROM ' . $this->options["articles_table"],
 			'Authors'    => 'SELECT * FROM ' . $this->options["author_table"],
-			'Categories' => 'SELECT ModuleSID, Title FROM ' . $this->options["taxonomy_table"] . ' WHERE Parent LIKE :value',
+			'Categories' => 'SELECT ModuleSID, Title, Parent FROM ' . $this->options["taxonomy_table"] . ' WHERE ModuleSID NOT REGEXP :value',
 			'Tags'       => 'SELECT ModuleSID, Title FROM ' . $this->options["taxonomy_table"],
 		);
 
@@ -149,15 +145,17 @@ class wp2ox_dal extends wp2ox {
 	private function connect() {
 
 		try {
+			$dsn = "mysql:host=localhost;dbname=" . $this->database;
+
 			$new_pdo = new PDO(
-				"mysql:host=localhost;", $this->dbusername, $this->dbpassword);
+				$dsn,
+				$this->dbusername,
+				$this->dbpassword
+			);
 		} catch ( Exception $oxc_e ) {
 
-			return $oxc_e->getMessage();
+			var_export( $oxc_e->getMessage() );
 		}
-
-		$database_sql = 'USE ' . $this->database;
-		$new_pdo->exec($database_sql);
 
 		return $new_pdo;
 	}
@@ -171,12 +169,7 @@ class wp2ox_dal extends wp2ox {
 	 */
 	public function get_authors() {
 
-		if ( $this->queryResults('Authors') == TRUE ) {
-
-			return $this->results_array();
-		}
-
-		return NULL;
+		return $this->queryResults('Authors');
 	}
 
 	/**
@@ -188,12 +181,7 @@ class wp2ox_dal extends wp2ox {
 	 */
 	public function get_categories ( ) {
 
-		if ( $this->queryResults('Categories', $this->searchVal ) == TRUE ) {
-
-			return $this->results_array();
-		}
-
-		return NULL;
+		return $this->queryResults('Categories', $this->searchVal );
 	}
 
 	/**
@@ -205,12 +193,7 @@ class wp2ox_dal extends wp2ox {
 	 */
 	public function get_articles ( ) {
 
-		if ( $this->queryResults('Articles') == TRUE ) {
-
-			return $this->results_array();
-		}
-
-		return NULL;
+		return $this->queryResults('Articles');
 	}
 
 	/**
@@ -222,12 +205,7 @@ class wp2ox_dal extends wp2ox {
 	 */
 	public function get_tags ( ) {
 
-		if ( $this->queryResults('Tags') == TRUE ) {
-
-			return $this->results_array();
-		}
-
-		return NULL;
+		return $this->queryResults('Tags');
 	}
 
 }

@@ -10,38 +10,78 @@
  * returns array
  */
 class wp2ox_category {
-    // source data for matching
-    protected $idArray = Array();
-    // old categories
-    protected $data = Array();
-    // return data
-    protected $results;
 
-    // Construct
-    public function __construct( $data, $array ) {
-        // bust up string into array
-        $this->data     = explode( ', ', $data ); // $oxc_row['Taxonomy'];
+	/**
+	 * @var array
+	 */
+	protected $idArray;
+	/**
+	 * @var array
+	 */
+	protected $data;
+	/**
+	 * @var array
+	 */
+	protected $results;
+
+	/**
+	 * Le Constructor
+	 *
+	 * Takes a comma separated string, turns it into an array.
+	 *
+	 * Takes that array, and checks to see if it's
+	 *
+	 * @param string $csv
+	 * @param array  $values
+	 */
+	public function __construct( $csv, $values ) {
+		// Takes comma separated string and turns into array
+		$this->data     = explode( ', ', $csv );
         // data to compare against
-        $this->idArray  = $array;
-        return $this->resultTerms();
+        $this->idArray  = $values;
     }
-    // if the tag is match, add to array
-    protected function resultTerms( ) {
-        // Start the loop
+
+	/**
+	 * Result Terms
+	 *
+	 * Takes an array of possible strings, checks if they're in the category array
+	 * If they are, it adds to results array
+	 *
+	 * @return array
+	 */
+	public function resultTerms( ) {
         foreach ( $this->data as $string ) {
             // see if a category matches
             $newTerm = $this->validateData( $string );
-            array_push( $newTerm, $this->results );
+			if ($newTerm !== null ) {
+
+				$this->results .= $newTerm . ', ';
+			}
         }
-        return $this->results;
+
+		if ( $this->results !== null ) {
+
+			return explode(', ', $this->results);
+		}
+
+		return null;
     }
-    // checks to see if it's in array
-    protected function validateData( $string ) {
+
+	/**
+	 * @param string $string
+	 *
+	 * @return null|mixed Returns new value on success, null on failure.
+	 */
+	protected function validateData( $string ) {
+
         $newId = array_search($string, $this->idArray);
+
         if ( $newId ) {
+
             return $newId;
         } else {
-            return false;
+
+            return null;
         }
     }
 }

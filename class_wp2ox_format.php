@@ -91,6 +91,8 @@ class wp2ox_tidy extends Tidy {
 		'™', // tm
 	);
 
+	public $repaired_html;
+
 	/**
 	 * @param null|string $html HTML fragment to tidy up.
 	 */
@@ -101,9 +103,7 @@ class wp2ox_tidy extends Tidy {
 		$new_html = $this->repairString( $html, $this->config, 'UTF8' );
 
 		// Fixes the html by removing bad tags and replacing bad characters
-		$fixed_html = $this->fix_html( $new_html, $this->find, $this->replace );
-
-		return $fixed_html;
+		$this->repaired_html = $this->fix_html( $new_html, $this->find, $this->replace );
 	}
 
 	/**

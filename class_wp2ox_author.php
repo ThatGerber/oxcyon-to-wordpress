@@ -19,32 +19,44 @@ class wp2ox_author {
 	 * Check array
 	 * @var array
 	 */
-	protected $data;
+	protected $author_id;
 	/**
 	 * @var mixed
 	 */
 	protected $results;
 
+	protected $author_byline;
+
     // Construct
-    public function __construct( $data, $array ) {
+    public function __construct( $author_id, $array, $author_byline = null ) {
         // Author ID to look for
-        $this->data    = $data;
+        $this->author_id    = $author_id;
+		// Story Byline
+		$this->author_byline = $author_byline;
         // data to compare against
         $this->idArray = $array;
-
-        return $this->resultTerms();
     }
     // if the tag is match, add to array
-    protected function resultTerms( ) {
+    public function resultTerms( ) {
         // Start the loop
-		$this->results = $this->validateData( $this->data );
 
-        return $this->results;
+        return $this->validateData();
     }
     // checks to see if it's in array
-    protected function validateData( $string ) {
-        $newId = array_search($string, $this->idArray);
-        if ( $newId ) {
+    protected function validateData( ) {
+
+		$byline = substr( $this->author_byline, 3 );
+		// check the byline
+		$byline_author = array_search( $byline, $this->idArray );
+
+		if ( $byline_author ) {
+
+			return array_search( $byline_author, $this->idArray );
+		}
+
+        $newId = array_search($this->author_id, $this->idArray);
+
+        if ( $newId && $this->author_id != 'B8571AB171084BCAAE1DA200F6622E5D' ) {
 
             return $newId;
         } else {
