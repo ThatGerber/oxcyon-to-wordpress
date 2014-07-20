@@ -4,9 +4,6 @@
  */
 $import_folder = dirname( __FILE__ );
 
-/** Required to load WordPress */
-require_once( ABSPATH . '/wp-load.php');
-
 /** The main class and sub / extended classes */
 include( $import_folder . "/class_wp2ox.php");
 
