@@ -22,5 +22,4 @@ include( $import_folder . "/class_wp2ox_category.php");
 // Tag Creator
 include( $import_folder . "/class_wp2ox_tag.php");
 
-
 new wp2ox;
