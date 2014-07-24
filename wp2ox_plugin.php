@@ -63,16 +63,19 @@ class wp2ox_settings_page {
 
 		$this->options = get_option( 'wp2ox_settings' );
 		$import_script = $this->plugin_folder . '/wp2ox_import.php';
-		$script_url = plugins_url($import_script);
 
 		?>
 		<div class="wrap">
+
 			<h2>Oxcyon to WordPress Import</h2>
+
 			<p>
 				Enter the necessary values below. After all of the fields have been set, press "Import" to run the
 				import script.
 			</p>
-			<?php if ( $_POST['import_wp2ox'] === NULL ) { ?>
+
+		<?php if ( !isset( $_POST['import_wp2ox'] ) ) { ?>
+
 			<form method="post" action="options.php">
 				<?php
 				settings_fields( 'wp2ox-settings-group' );
@@ -93,11 +96,11 @@ class wp2ox_settings_page {
 
 			</form>
 
-			<?php } else {
+		<?php } else {
 
-				include( $import_script );
+			include( $import_script );
 
-			} ?>
+		} ?>
 
 		</div>
 	<?php
@@ -143,9 +146,9 @@ class wp2ox_settings_page {
 
 		/** Brand */
 		add_settings_field(
-			'brand', // ID
-			'Brand', // Title
-			array( $this, 'brand_callback' ), // Callback
+			'image_dir', // ID
+			'Image Directory', // Title
+			array( $this, 'image_callback' ), // Callback
 			'wp2ox_basic', // Page
 			'basic_settings' // Section
 		);
@@ -238,7 +241,7 @@ class wp2ox_settings_page {
 
 		$new_input = array();
 
-		$new_input['brand']          = wp_filter_nohtml_kses( $input[ 'brand' ] );
+		$new_input['image_dir']      = wp_filter_nohtml_kses( $input[ 'image_dir' ] );
 		$new_input['category_value'] = wp_filter_nohtml_kses( $input[ 'category_value' ] );
 		$new_input['db_username']    = wp_filter_nohtml_kses( $input[ 'db_username' ] );
 		$new_input['db_password']    = wp_filter_nohtml_kses( $input[ 'db_password' ] );
@@ -280,18 +283,16 @@ class wp2ox_settings_page {
 	<?php
 	}
 
-	public function brand_callback() {
+	public function image_callback() {
 		?>
-
+		<label for="wp2ox_settings[image_dir]">
+			<input type="text" name="wp2ox_settings[image_dir]" value="<?php echo $this->options['image_dir']; ?>" />
+			<em>Directory of Images (wp-content/uploads/{Image Directory/})</em>
+		</label>
 		<p>
-			<input type="text" name="wp2ox_settings[brand]" value="<?php echo $this->options['brand']; ?>" />
-		</p>
-		<p>
-			<em>Three Letter prefix for brand to be imported.</em>
-		</p>
-		<p>
-			Brand is the three letter code for the brand that we're working with in the old data. It's prepended to
-			the table for reference to each item's data.
+			Directory that the script should look for within the "Uploads" folder, with the trailing slash.
+			For example, if images are located in <code>wp-content/uploads/archive/</code>, enter <code>archive/</code>
+			in the above field.
 		</p>
 	<?php
 	}
@@ -299,10 +300,7 @@ class wp2ox_settings_page {
 	public function cat_value_callback() {
 		?>
 		<p>
-			<input type="text" name="wp2ox_settings[category_value]" value="<?php echo $this->options['category_value']; ?>" />
-		</p>
-		<p>
-			<em>String to identify categories in the database. String should be enclosed in '%' symbols.</em>
+			<label for="wp2ox_settings[category_value]"><input type="text" name="wp2ox_settings[category_value]" value="<?php echo $this->options['category_value']; ?>" /> <em>String to identify categories in the database. String should be enclosed in '%' symbols.</em></label>
 		</p>
 		<p>
 			The "Category Value" is the SQL <code>LIKE</code> statement used to capture the categories from the

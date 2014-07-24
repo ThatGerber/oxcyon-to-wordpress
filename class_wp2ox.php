@@ -185,6 +185,12 @@ class wp2ox {
 			if ( $import ) {
 				$postNumber++;
 				wp2ox::reportText( 'p', "Post Number: {$postNumber} added successfully");
+
+				$featured_image = $this->import_featured_image( $import, $old_article['Image'], $this->options['image_folder'] );
+
+				if ( $featured_image !== FALSE ) {
+					wp2ox::reportText('em', 'Image added to post');
+				}
 			}
 
 		}
@@ -353,6 +359,52 @@ class wp2ox {
 		}
 		echo '</table>';
 
+	}
+
+	public function import_featured_image( $parent_post_id, $image_dir, $image_folder ) {
+
+		// Break supplied path into parts
+		$image_dir_parts = explode('/', $image_dir);
+
+		// Get the file name from those parts
+		$image_filename = end( array_values( $image_dir_parts ) );
+
+		// Get the path to the upload directory.
+		$wp_upload_dir = wp_upload_dir();
+
+		// $filename should be the path to a file in the upload directory.
+		$filename = $wp_upload_dir['path'] . $image_folder . $image_filename;
+
+		if ( file_exists( $filename ) ) {
+			// Check the type of file. We'll use this as the 'post_mime_type'.
+			$filetype = wp_check_filetype( basename( $filename ), null );
+
+			// Prepare an array of post data for the attachment.
+			$attachment = array(
+				'guid'           => $wp_upload_dir['url'] . '/' . basename( $filename ),
+				'post_mime_type' => $filetype['type'],
+				'post_title'     => preg_replace( '/\.[^.]+$/', '', basename( $filename ) ),
+				'post_content'   => '',
+				'post_status'    => 'inherit'
+			);
+
+			// Insert the attachment.
+			$attach_id = wp_insert_attachment( $attachment, $filename, $parent_post_id );
+
+			if ( $attach_id !== FALSE ) {
+				// Generate the metadata for the attachment, and update the database record.
+				$attach_data = wp_generate_attachment_metadata( $attach_id, $filename );
+
+				wp_update_attachment_metadata( $attach_id, $attach_data );
+
+				if ( FALSE !== update_post_meta( $parent_post_id, 'thumbnail_id', $attach_id ) ) {
+
+					return TRUE;
+				}
+			}
+		}
+
+		return FALSE;
 	}
 
 }

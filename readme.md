@@ -28,7 +28,7 @@ Move Oxcyon data into WordPress
 **Back up your database before importing**
 IMPORTANT: The import cannot be undone. MAKE SURE TO BACK UP YOUR DATABASE BEFORE RUNNING THE PLUGIN.
 
-# Oxcyon to WordPress
+### Oxcyon to WordPress
 
 Plugin was developed to move an Oxcyon Centralpoint based website into WordPress. The plugin will take data from a
 predetermined format and convert it into WordPress data.
@@ -66,7 +66,7 @@ Check it out on Github: [Oxcyon to WordPress][github]
 
 ## Settings ##
 
-Brand: Name of the brand being imported.
+Image Directory: Directory within the uploads folder that contains images to be imported
 
 Category Value: REGEXP statement to target category GUIDS
 
@@ -86,13 +86,17 @@ Articles Table:  Table containing each individual article or page to be imported
 
 None yet.
 
-== Screenshots ==
-
-
-
 == Changelog ==
 
-= 0.1.0 =
+= 0.3.0 =
+* Added "Featured Image" import feature. Article image attachments automatically imported as featured images.
+* Removed "Brand" option as it was no longer used.
+* Fixed undefined index on settings page.
+
+= 0.2.0 =
 * First release of the plugin.
+
+= 0.1.0 =
+* Internal release
 
 [github]: https://github.com/ThatGerber/oxcyon-to-wordpress/archive/master.zip "Oxcyon to WordPress - GitHub"

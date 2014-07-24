@@ -3,7 +3,7 @@ Contributors: chriswgerber
 Tags: Oxcyon Centralpoint, Oxcyon, Centralpoint
 Requires at least: 3.0.0
 Tested up to: 4.0
-Stable tag: 0.1.0
+Stable tag: 0.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -52,7 +52,7 @@ Check it out on Github: https://github.com/ThatGerber/oxcyon-to-wordpress/
 
 ## Settings ##
 
-Brand: Name of the brand being imported.
+Image Directory: Directory of the images (located within the Uploads folder)
 
 Category Value: REGEXP statement to target category GUIDS
 
@@ -72,11 +72,16 @@ Articles Table:  Table containing each individual article or page to be imported
 
 None yet.
 
-== Screenshots ==
-
-
 
 == Changelog ==
 
+= 0.3.0 =
+* Added "Featured Image" import feature. Article image attachments automatically imported as featured images.
+* Removed "Brand" option as it was no longer used.
+* Fixed undefined index on settings page.
+
 = 0.2.0 =
 * First release of the plugin.
+
+= 0.1.0 =
+* Internal release
