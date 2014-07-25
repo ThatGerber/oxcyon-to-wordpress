@@ -13,7 +13,7 @@ Tested up to:
 4.0
 
 Stable tag:
-0.1.0
+0.3.0
 
 License:
 GPLv2 or later
