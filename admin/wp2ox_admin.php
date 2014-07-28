@@ -201,6 +201,8 @@ class wp2ox_admin {
 
 			include( $import_script );
 
+			new wp2ox;
+
 		} ?>
 
 		</div>
@@ -286,10 +288,10 @@ class wp2ox_admin {
 	public function db_user_callback() {
 		?>
 		<p>
-			<input type="text" name="wp2ox_settings[db_username]" value="<?php echo $this->options['db_username']; ?>" />
-		</p>
-		<p>
-			<em>Username to access database with old data.</em>
+			<label for="wp2ox_settings[db_username]">
+				<input type="text" name="wp2ox_settings[db_username]" value="<?php echo $this->options['db_username']; ?>" />
+				<em>Username to access database with old data.</em>
+			</label>
 		</p>
 	<?php
 	}
@@ -297,10 +299,10 @@ class wp2ox_admin {
 	public function db_pass_callback() {
 		?>
 		<p>
-			<input type="text" name="wp2ox_settings[db_password]" value="<?php echo $this->options['db_password']; ?>" />
-		</p>
-		<p>
-			<em>Password to access database with old data.</em>
+			<label for="wp2ox_settings[db_password]">
+				<input type="text" name="wp2ox_settings[db_password]" value="<?php echo $this->options['db_password']; ?>" />
+				<em>Password to access database with old data.</em>
+			</label>
 		</p>
 	<?php
 	}
@@ -308,10 +310,13 @@ class wp2ox_admin {
 	public function db_name_callback() {
 		?>
 		<p>
-			<input type="text" name="wp2ox_settings[db_name]" value="<?php echo $this->options['db_name']; ?>" />
+
 		</p>
 		<p>
-			<em>Name of Database containing old data.</em>
+			<label for="wp2ox_settings[db_name]">
+				<input type="text" name="wp2ox_settings[db_name]" value="<?php echo $this->options['db_name']; ?>" />
+				<em>Name of Database containing old data.</em>
+			</label>
 		</p>
 	<?php
 	}
@@ -319,10 +324,10 @@ class wp2ox_admin {
 	public function aut_table_callback() {
 		?>
 		<p>
-			<input type="text" name="wp2ox_settings[author_table]" value="<?php echo $this->options['author_table']; ?>" />
-		</p>
-		<p>
-			<em>Full name of the author table to be imported.</em>
+			<label for="wp2ox_settings[author_table]">
+				<input type="text" name="wp2ox_settings[author_table]" value="<?php echo $this->options['author_table']; ?>" />
+				<em>Full name of the author table to be imported.</em>
+			</label>
 		</p>
 	<?php
 	}
@@ -330,10 +335,10 @@ class wp2ox_admin {
 	public function tax_table_callback() {
 		?>
 		<p>
-			<input type="text" name="wp2ox_settings[taxonomy_table]" value="<?php echo $this->options['taxonomy_table']; ?>" />
-		</p>
-		<p>
-			<em>Full name of taxonomy table to be imported.</em>
+			<label for="wp2ox_settings[taxonomy_table]">
+				<input type="text" name="wp2ox_settings[taxonomy_table]" value="<?php echo $this->options['taxonomy_table']; ?>" />
+				<em>Full name of taxonomy table to be imported.</em>
+			</label>
 		</p>
 	<?php
 	}
@@ -341,10 +346,10 @@ class wp2ox_admin {
 	public function art_table_callback() {
 		?>
 		<p>
-			<input type="text" name="wp2ox_settings[articles_table]" value="<?php echo $this->options['articles_table']; ?>" />
-		</p>
-		<p>
-			<em>Full name of articles table to be imported.</em>
+			<label for="wp2ox_settings[articles_table]">
+				<input type="text" name="wp2ox_settings[articles_table]" value="<?php echo $this->options['articles_table']; ?>" />
+				<em>Full name of articles table to be imported.</em>
+			</label>
 		</p>
 	<?php
 	}

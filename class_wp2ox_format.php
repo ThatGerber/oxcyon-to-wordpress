@@ -29,24 +29,24 @@ class wp2ox_tidy extends Tidy {
 	/**
 	 * @var array Configuration for Tidy
 	 */
-	public $config = array(
+	private $config = array(
 		"bare"              => true,
 		"clean"             => true,
 		"DocType"           => "omit",
 		"drop-font-tags"    => true,
 		"drop-proprietary-attributes" => true,
-		"join-classes" => true,
-		"merge-divs" => true,
-		"merge-spans" => true,
-		"output-encoding" => 'UTF8',
-		"show-body-only" => true,
-		"word-2000" => true,
+		"join-classes"      => true,
+		"merge-divs"        => true,
+		"merge-spans"       => true,
+		"output-encoding"   => 'UTF8',
+		"show-body-only"    => true,
+		"word-2000"         => true,
 	);
 
 	/**
 	 * @var array Array of items to find.
 	 */
-	public $find = Array(
+	private $find = Array(
 		'<span>',     // No Spans
 		'</span>',    // No Spans
 		'<html>',    // No HTML
@@ -70,7 +70,7 @@ class wp2ox_tidy extends Tidy {
 	/**
 	 * @var array Items to put in place of the above items.
 	 */
-	public $replace = Array(
+	private $replace = Array(
 		" ", // Span open
 		" ", // Span Close
 		" ", // html open
@@ -91,19 +91,26 @@ class wp2ox_tidy extends Tidy {
 		'™', // tm
 	);
 
+	/**
+	 * @var string $repaired_html Clean, happy HTML.
+	 */
 	public $repaired_html;
 
 	/**
 	 * @param null|string $html HTML fragment to tidy up.
 	 */
 	function __construct( $html ) {
+
 		// New Instance
-		parent::__construct();
+		//parent::__construct();
+
 		// Run repairString with config.
-		$new_html = $this->repairString( $html, $this->config, 'UTF8' );
+		//$new_html = $this->repairString( $html, $this->config, 'UTF8' );
+
+		//$this->repaired_html = $new_html;
 
 		// Fixes the html by removing bad tags and replacing bad characters
-		$this->repaired_html = $this->fix_html( $new_html, $this->find, $this->replace );
+		//$this->repaired_html = $this->fix_html( $new_html, $this->find, $this->replace );
 	}
 
 	/**

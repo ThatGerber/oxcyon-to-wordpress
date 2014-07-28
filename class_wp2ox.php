@@ -18,13 +18,10 @@
  */
 class wp2ox {
 
-
-	private $options;
-
 	/**
-	 * @var $brand string Which brand is being worked with.
+	 * @var array $options Options array
 	 */
-	public $brand;
+	private $options;
 
 	/**
 	 * @var $category_value string "Like" string for database search
@@ -56,14 +53,13 @@ class wp2ox {
 		$this->wp2ox_dbh = $wp2ox_dbh;
 
 		$this->import_tags();
-		$this->import_categories();
-		$this->import_authors();
+		//$this->import_categories();
+		//$this->import_authors();
 		$this->import_articles();
 	}
 
 	protected function set_variables( $option_group ) {
 		$this->options        = $option_group;
-		$this->brand          = $option_group['brand'];
 		$this->category_value = $option_group['category_value'];
 	}
 
@@ -147,7 +143,7 @@ class wp2ox {
 		foreach ( $articles as $old_article ) {
 
 			// Post Author
-			$oxc_postAuthor     = new wp2ox_author(
+			/*$oxc_postAuthor     = new wp2ox_author(
 				$old_article['Author'],
 				$this->get_reference_array('Authors'),
 				$old_article['Byline']
@@ -156,27 +152,32 @@ class wp2ox {
 			$oxc_postCategories = new wp2ox_category(
 				$old_article['Taxonomy'],
 				$this->get_reference_array('Categories')
-			);
+			);*/
 			// Post Tags
 			$oxc_postTags       = new wp2ox_tag(
-				$old_article['Taxonomy'],
+				$old_article['1st Tier Type'],
 				$this->get_reference_array('Tags')
 			);
 			// Post Content
-			$body_copy          = new wp2ox_tidy( $old_article['Body Copy']	);
+			//$body_copy          = new wp2ox_tidy( $old_article['Body Text']	);
+			//$body_text          = $body_copy->repaired_html;
+
+			$body_copy = $old_article['Body Text'];
+			var_dump($body_copy);
+
 			// The New Post
-			//var_dump( $oxc_postAuthor->resultTerms() );
 			$new_post = array(
-				'post_content'   => $body_copy->repaired_html, // The full text of the post.
+				'post_content'   => $body_text,                                          // The full text of the post.
 				'post_name'      => sanitize_title_with_dashes( $old_article['Title'] ), // The name (slug) for your post
-				'post_title'     => $old_article['Title'], // The title of your post.
-				'post_status'    => 'publish',
-				'post_author'    => intval( $oxc_postAuthor->resultTerms() ), // The user ID number of the author. Default is the current user ID.
-				'post_excerpt'   => wp_strip_all_tags( mb_convert_encoding( $old_article['Deck'], 'UTF-8' ) ), // For all your post excerpt needs.
+				'post_title'     => $old_article['Title'],                               // The title of your post.
+				'post_status'    => 'publish',                                           // Set to Publish
+				//'post_author'    => intval( $oxc_postAuthor->resultTerms() ),          // The user ID number of the author. Default is the current user ID.
+				'post_author'    => '',
+				'post_excerpt'   => wp_strip_all_tags( mb_convert_encoding( $old_article['Caption'], 'UTF-8' ) ), // For all your post excerpt needs.
 				'post_date'      => date("Y-m-d H:i:s", strtotime($old_article['StartDate'])), // The time post was made.
 				'post_date_gmt'  => date("Y-m-d H:i:s", strtotime( $old_article['StartDate'] ) - 1800 ), // The time post was made, in GMT.
 				'comment_status' => 'open', // Default is the option 'default_comment_status', or 'closed'.
-				'post_category'  => $oxc_postCategories->resultTerms(), // Default empty. array( int, int, int )
+				'post_category'  => array(1), //$oxc_postCategories->resultTerms(), // Default empty. array( int, int, int )
 				'tags_input'     => $oxc_postTags->resultTerms() // Default empty. 'tag, tag, tag'
 			);
 			// Create Post
@@ -186,11 +187,26 @@ class wp2ox {
 				$postNumber++;
 				wp2ox::reportText( 'p', "Post Number: {$postNumber} added successfully");
 
-				$featured_image = $this->import_featured_image( $import, $old_article['Image'], $this->options['image_folder'] );
+				if ( isset( $old_article['Byline'] ) && strlen( $old_article['Byline'] ) >= 1 ) {
+					wp2ox::reportText('em', 'Byline added to post.');
 
-				if ( $featured_image !== FALSE ) {
-					wp2ox::reportText('em', 'Image added to post');
+					add_post_meta( $import, 'Byline', $old_article['Byline'] );
+
 				}
+
+				echo $old_article['Image'];
+
+				if ( strlen( $old_article['Image'] ) >= 1 ) {
+
+					$featured_image = $this->import_featured_image( $import, $old_article['Image'], $this->options['image_dir'] );
+
+					if ( $featured_image !== FALSE ) {
+						wp2ox::reportText('em', ' Image added to post.');
+					}
+				}
+			}
+			if ( $postNumber > 40 ) {
+				exit;
 			}
 
 		}
@@ -367,13 +383,13 @@ class wp2ox {
 		$image_dir_parts = explode('/', $image_dir);
 
 		// Get the file name from those parts
-		$image_filename = end( array_values( $image_dir_parts ) );
+		$image_filename = end( $image_dir_parts );
 
 		// Get the path to the upload directory.
 		$wp_upload_dir = wp_upload_dir();
 
 		// $filename should be the path to a file in the upload directory.
-		$filename = $wp_upload_dir['path'] . $image_folder . $image_filename;
+		$filename = '/Users/chrisgerberepg/Sites/demo-site/wp-content/uploads/' . $image_folder . $image_filename;
 
 		if ( file_exists( $filename ) ) {
 			// Check the type of file. We'll use this as the 'post_mime_type'.
@@ -397,7 +413,7 @@ class wp2ox {
 
 				wp_update_attachment_metadata( $attach_id, $attach_data );
 
-				if ( FALSE !== update_post_meta( $parent_post_id, 'thumbnail_id', $attach_id ) ) {
+				if ( FALSE !== update_post_meta( $parent_post_id, '_thumbnail_id', $attach_id ) ) {
 
 					return TRUE;
 				}

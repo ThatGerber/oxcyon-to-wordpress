@@ -53,7 +53,7 @@ class wp2ox_dal extends wp2ox {
 	private function set_import_variables($option_group) {
 		$this->options        = $option_group;
 		$this->dbusername     = $option_group['db_username'];
-		$this->dbpassword     = $option_group['db_passpass'];
+		$this->dbpassword     = $option_group['db_pass'];
 		$this->database       = $option_group['db_name'];
 		$this->searchVal      = $option_group['category_value'];
 
