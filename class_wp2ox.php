@@ -162,8 +162,8 @@ class wp2ox {
 			);
 
 			// Post Content
-			$body_copy = new wp2ox_tidy( $old_article['Body Text'] );
-			$body_text = $body_copy->repaired_html;
+			//$body_copy = new wp2ox_tidy( $old_article['Body Text'] );
+			//$body_text = $body_copy->repaired_html;
 
 			// The New Post
 			$new_post = array(
