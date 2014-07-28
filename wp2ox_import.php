@@ -10,7 +10,7 @@ include( WP2OX_DIR . "/class_wp2ox.php");
 include( WP2OX_DIR . "/class_wp2ox_dal.php");
 
 // Tidy
-include( WP2OX_DIR . "/class_wp2ox_format.php");
+include( WP2OX_DIR . "/class_wp2ox_tidy.php");
 
 // Author/Category creator
 include( WP2OX_DIR . "/class_wp2ox_author.php");

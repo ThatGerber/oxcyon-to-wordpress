@@ -1,17 +1,5 @@
 <?php
 /**
- * Import Functions Page
- *
- * This will hold functions and classes related to the project import.
- *
- * @category    PHP
- * @copyright   2014
- * @license     WTFPL
- * @version     1.1.0
- * @since       2/18/2014
- */
-
-/**
  * Class wp2ox_tidy
  *
  * Holds data and references for transferring between Wordpress and Oxcyon.
@@ -29,24 +17,24 @@ class wp2ox_tidy extends Tidy {
 	/**
 	 * @var array Configuration for Tidy
 	 */
-	private $config = array(
-		"bare"              => true,
-		"clean"             => true,
-		"DocType"           => "omit",
-		"drop-font-tags"    => true,
+	protected $config = array(
+		"bare"                        => true,
+		"clean"                       => true,
+		"DocType"                     => "omit",
+		"drop-font-tags"              => true,
 		"drop-proprietary-attributes" => true,
-		"join-classes"      => true,
-		"merge-divs"        => true,
-		"merge-spans"       => true,
-		"output-encoding"   => 'UTF8',
-		"show-body-only"    => true,
-		"word-2000"         => true,
+		"join-classes"                => true,
+		"merge-divs"                  => true,
+		"merge-spans"                 => true,
+		"output-encoding"             => 'UTF8',
+		"show-body-only"              => true,
+		"word-2000"                   => true,
 	);
 
 	/**
 	 * @var array Array of items to find.
 	 */
-	private $find = Array(
+	protected $find = Array(
 		'<span>',     // No Spans
 		'</span>',    // No Spans
 		'<html>',    // No HTML
@@ -70,7 +58,7 @@ class wp2ox_tidy extends Tidy {
 	/**
 	 * @var array Items to put in place of the above items.
 	 */
-	private $replace = Array(
+	protected $replace = Array(
 		" ", // Span open
 		" ", // Span Close
 		" ", // html open
@@ -99,18 +87,17 @@ class wp2ox_tidy extends Tidy {
 	/**
 	 * @param null|string $html HTML fragment to tidy up.
 	 */
-	function __construct( $html ) {
+	public function __construct( $html ) {
 
 		// New Instance
-		//parent::__construct();
+		parent::__construct();
 
 		// Run repairString with config.
-		//$new_html = $this->repairString( $html, $this->config, 'UTF8' );
-
-		//$this->repaired_html = $new_html;
+		$new_html = $this->repairString( $html, $this->config, 'UTF8' );
 
 		// Fixes the html by removing bad tags and replacing bad characters
-		//$this->repaired_html = $this->fix_html( $new_html, $this->find, $this->replace );
+		$this->repaired_html = $this->fix_html( $new_html, $this->find, $this->replace );
+		//$this->repaired_html = $new_html;
 	}
 
 	/**
@@ -140,7 +127,7 @@ class wp2ox_tidy extends Tidy {
 	 *
 	 * @return string $text Returns a string of text that has none of the formatting below.
 	 */
-	static function strip_html_tags( $text ) {
+	protected function strip_html_tags( $text ) {
 		$text = preg_replace(
 			[
 				'@<head[^>]*?>.*?</head>@siu',

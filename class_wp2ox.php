@@ -148,22 +148,22 @@ class wp2ox {
 				$this->get_reference_array('Authors'),
 				$old_article['Byline']
 			);
+
 			// Post Categories
 			$oxc_postCategories = new wp2ox_category(
 				$old_article['Taxonomy'],
 				$this->get_reference_array('Categories')
 			);*/
+
 			// Post Tags
 			$oxc_postTags       = new wp2ox_tag(
 				$old_article['1st Tier Type'],
 				$this->get_reference_array('Tags')
 			);
-			// Post Content
-			//$body_copy          = new wp2ox_tidy( $old_article['Body Text']	);
-			//$body_text          = $body_copy->repaired_html;
 
-			$body_copy = $old_article['Body Text'];
-			var_dump($body_copy);
+			// Post Content
+			$body_copy          = new wp2ox_tidy( $old_article['Caption'] );
+			$body_text          = $body_copy->repaired_html;
 
 			// The New Post
 			$new_post = array(
@@ -205,7 +205,7 @@ class wp2ox {
 					}
 				}
 			}
-			if ( $postNumber > 40 ) {
+			if ( $postNumber > 10 ) {
 				exit;
 			}
 
