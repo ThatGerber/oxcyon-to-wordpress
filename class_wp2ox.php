@@ -11,6 +11,8 @@
  * @since       2/18/2014
  */
 
+include('debug_info.php');
+
 /**
  * Class wp2ox
  *
@@ -162,8 +164,13 @@ class wp2ox {
 			);
 
 			// Post Content
-			$body_copy          = new wp2ox_tidy( $old_article['Caption'] );
+
+			echo $old_article['Body Text'];
+
+			$body_copy          = new wp2ox_tidy();
 			$body_text          = $body_copy->repaired_html;
+
+
 
 			// The New Post
 			$new_post = array(

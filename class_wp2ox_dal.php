@@ -53,7 +53,7 @@ class wp2ox_dal extends wp2ox {
 	private function set_import_variables($option_group) {
 		$this->options        = $option_group;
 		$this->dbusername     = $option_group['db_username'];
-		$this->dbpassword     = $option_group['db_pass'];
+		$this->dbpassword     = isset( $option_group['db_pass'] ) ? $option_group['db_pass'] : '';
 		$this->database       = $option_group['db_name'];
 		$this->searchVal      = $option_group['category_value'];
 
@@ -118,7 +118,7 @@ class wp2ox_dal extends wp2ox {
 	 * @param string $name Name of SQL Statement to run.
 	 *
 	 * @return bool|string Returns an SQL statement if it was a valid statement to query, or false if it was stupid.
- 	 */
+	 */
 	private function sql_statement( $name ) {
 
 		$array = array(
