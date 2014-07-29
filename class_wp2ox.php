@@ -142,6 +142,8 @@ class wp2ox {
 
 		foreach ( $articles as $old_article ) {
 
+			/*
+
 			// Post Author
 			$oxc_postAuthor     = new wp2ox_author(
 				$old_article['Author'],
@@ -155,6 +157,8 @@ class wp2ox {
 				$this->get_reference_array('Categories')
 			);
 
+			*/
+
 			// Post Tags
 			$oxc_postTags       = new wp2ox_tag(
 				$old_article['1st Tier Type'],
@@ -165,13 +169,30 @@ class wp2ox {
 			//$body_copy = new wp2ox_tidy( $old_article['Body Text'] );
 			//$body_text = $body_copy->repaired_html;
 
+			$allowed_tags =
+				array(
+					'p' => array(),
+					'a' => array(
+						'href' => array(),
+						'title' => array()
+					),
+					'br' => array(),
+					'em' => array(),
+					'strong' => array(),
+					'i' => array(),
+					'b' => array(),
+					'div' => array(),
+				);
+
+			$body_text = wp_kses($old_article['Body Copy'], $allowed_tags);
+
 			// The New Post
 			$new_post = array(
 				'post_content'   => $body_text,                                          // The full text of the post.
 				'post_name'      => sanitize_title_with_dashes( $old_article['Title'] ), // The name (slug) for your post
 				'post_title'     => $old_article['Title'],                               // The title of your post.
 				'post_status'    => 'publish',                                           // Set to Publish
-				'post_author'    => intval( $oxc_postAuthor->resultTerms() ),          // The user ID number of the author. Default is the current user ID.
+				//'post_author'    => intval( $oxc_postAuthor->resultTerms() ),          // The user ID number of the author. Default is the current user ID.
 				'post_excerpt'   => wp_strip_all_tags( mb_convert_encoding( $old_article['Caption'], 'UTF-8' ) ), // For all your post excerpt needs.
 				'post_date'      => date("Y-m-d H:i:s", strtotime($old_article['StartDate'])), // The time post was made.
 				'post_date_gmt'  => date("Y-m-d H:i:s", strtotime( $old_article['StartDate'] ) - 1800 ), // The time post was made, in GMT.
@@ -203,9 +224,6 @@ class wp2ox {
 						wp2ox::reportText('em', ' Image added to post.');
 					}
 				}
-			}
-			if ( $postNumber >= 5 ) {
-				break;
 			}
 
 		}
