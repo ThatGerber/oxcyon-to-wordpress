@@ -1,20 +1,16 @@
 <?php
 /**
- * Import Functions Page
+ * Class wp2ox
  *
- * This will hold functions and classes related to the project import.
+ * Imports the data. Connects with other classes to get information.
+ *
+ * Lots of god classes in here. Should be cleaned up and split apart more.
  *
  * @category    PHP
  * @copyright   2014
  * @license     WTFPL
  * @version     1.1.0
  * @since       2/18/2014
- */
-
-/**
- * Class wp2ox
- *
- * Holds data and references for transferring between Wordpress and Oxcyon.
  */
 class wp2ox {
 
@@ -24,14 +20,20 @@ class wp2ox {
 	private $options;
 
 	/**
-	 * @var $category_value string "Like" string for database search
-	 */
-	public $category_value;
-
-	/**
 	 * @var array $reference_array
 	 */
 	public $reference_array;
+
+
+	/**
+	 * @var object Array of Authors
+	 */
+	public $wp2ox_authors;
+
+	/**
+	 * @var object Array of Categories
+	 */
+	public $wp2ox_categories;
 
 	/**
 	 * Number of posts imported
@@ -44,23 +46,39 @@ class wp2ox {
 	 * Import the user settings and set up the object.
 	 */
 	function __construct() {
-		$this->set_variables( get_option( 'wp2ox_settings' ) );
+
+		$this->options = new wp2ox_data;
 
 		/**
 		 * DATABASE CONNECTION
 		 */
-		$wp2ox_dbh = new wp2ox_dal;
-		$this->wp2ox_dbh = $wp2ox_dbh;
+		$this->wp2ox_dbh = new wp2ox_dal;
 
-		$this->import_tags();
-		//$this->import_categories();
-		//$this->import_authors();
-		$this->import_articles();
-	}
+		if ( strlen( $this->options->taxonomy_table ) ) {
+			/**
+			 * IMPORT TAGS
+			 */
+			$this->import_tags();
 
-	protected function set_variables( $option_group ) {
-		$this->options        = $option_group;
-		$this->category_value = $option_group['category_value'];
+			/**
+			 * IMPORT AUTHORS
+			 */
+			$this->import_categories();
+		}
+
+		if ( strlen( $this->options->author_table ) ) {
+			/**
+			 * IMPORT AUTHORS
+			 */
+			$this->import_authors();
+		}
+
+		if ( strlen( $this->options->articles_table ) ) {
+			/**
+			 * IMPORT ARTICLES
+			 */
+			$this->import_articles();
+		}
 	}
 
 	/**
@@ -68,9 +86,14 @@ class wp2ox {
 	 *
 	 * Creates a nested array of reference data. To be used to query later on when importing articles.
 	 *
+	 * !IMPORTANT
+	 * This will be deprecated in favor of wp2ox_data object.
+	 *
 	 * @param $name string|int Name of array to store it in.
 	 * @param $val1 string|int Key to store
 	 * @param $val2 string|int Value to store
+	 *
+	 * @return bool
 	 */
 	public function add_reference($name, $val1, $val2) {
 
@@ -86,6 +109,9 @@ class wp2ox {
 
 	/**
 	 * Returns a reference array stored through add_reference
+	 *
+	 * !IMPORTANT
+	 * This will be deprecated in favor of wp2ox_data object.
 	 *
 	 * @param $name string Name of array requested
 	 *
@@ -142,33 +168,33 @@ class wp2ox {
 
 		foreach ( $articles as $old_article ) {
 
-			/*
+			/** Set Up Author's Object */
+			$oxc_postAuthor          = new wp2ox_author();
+			$oxc_postAuthor->idArray = $this->wp2ox_authors;
 
-			// Post Author
-			$oxc_postAuthor     = new wp2ox_author(
-				$old_article['Author'],
-				$this->get_reference_array('Authors'),
-				$old_article['Byline']
-			);
+			if ( isset( $old_article['Author'] ) ) {
+				// Post Author
+				$oxc_postAuthor->author_id = $old_article['Author'];
+			}
+			if ( isset( $old_article['Byline'] ) ) {
+				$oxc_postAuthor->author_byline = $old_article['Byline'];
+			}
 
-			// Post Categories
-			$oxc_postCategories = new wp2ox_category(
-				$old_article['Taxonomy'],
-				$this->get_reference_array('Categories')
-			);
+			/** Set Up Categories Object */
+			$oxc_postCategories = new wp2ox_category();
+			$oxc_postCategories->idArray = $this->wp2ox_categories;
+			if ( isset( $old_article['Taxonomy'] ) ) {
+				$oxc_postCategories->data = $old_article['Taxonomy'];
+			}
 
-			*/
-
-			// Post Tags
-			$oxc_postTags       = new wp2ox_tag(
-				$old_article['1st Tier Type'],
-				$this->get_reference_array('Tags')
-			);
+			/** Set Up Tags Object */
+			$oxc_postTags = new wp2ox_category();
+			$oxc_postTags->idArray = $this->get_reference_array('Tags');
+			if ( isset( $old_article['1st Tier Type'] ) ){
+				$oxc_postTags->data = $old_article['1st Tier Type'];
+			}
 
 			// Post Content
-			//$body_copy = new wp2ox_tidy( $old_article['Body Text'] );
-			//$body_text = $body_copy->repaired_html;
-
 			$allowed_tags =
 				array(
 					'p' => array(),
@@ -183,7 +209,6 @@ class wp2ox {
 					'b' => array(),
 					'div' => array(),
 				);
-
 			$body_text = wp_kses($old_article['Body Copy'], $allowed_tags);
 
 			// The New Post
@@ -192,19 +217,20 @@ class wp2ox {
 				'post_name'      => sanitize_title_with_dashes( $old_article['Title'] ), // The name (slug) for your post
 				'post_title'     => $old_article['Title'],                               // The title of your post.
 				'post_status'    => 'publish',                                           // Set to Publish
-				//'post_author'    => intval( $oxc_postAuthor->resultTerms() ),          // The user ID number of the author. Default is the current user ID.
+				'post_author'    => intval( $oxc_postAuthor->get_author() ),          // The user ID number of the author. Default is the current user ID.
 				'post_excerpt'   => wp_strip_all_tags( mb_convert_encoding( $old_article['Caption'], 'UTF-8' ) ), // For all your post excerpt needs.
 				'post_date'      => date("Y-m-d H:i:s", strtotime($old_article['StartDate'])), // The time post was made.
 				'post_date_gmt'  => date("Y-m-d H:i:s", strtotime( $old_article['StartDate'] ) - 1800 ), // The time post was made, in GMT.
 				'comment_status' => 'open', // Default is the option 'default_comment_status', or 'closed'.
-				'post_category'  => array(1), //$oxc_postCategories->resultTerms(), // Default empty. array( int, int, int )
-				'tags_input'     => $oxc_postTags->resultTerms() // Default empty. 'tag, tag, tag'
+				'post_category'  => $oxc_postCategories->get_categories(), // Default empty. array( int, int, int )
+				'tags_input'     => $oxc_postTags->get_tags() // Default empty. 'tag, tag, tag'
 			);
 			// Create Post
 			$import = wp_insert_post( $new_post, true );
 			// If it imported, report and increment
 			if ( $import ) {
 				$postNumber++;
+
 				wp2ox::reportText( 'p', "Post Number: {$postNumber} added successfully");
 
 				if ( isset( $old_article['Byline'] ) && strlen( $old_article['Byline'] ) >= 1 ) {
@@ -214,14 +240,12 @@ class wp2ox {
 
 				}
 
-				echo $old_article['Image'];
-
 				if ( strlen( $old_article['Image'] ) >= 1 ) {
 
-					$featured_image = $this->import_featured_image( $import, $old_article['Image'], $this->options['image_dir'] );
+					$featured_image = $this->import_featured_image( $import, $old_article['Image'], $this->options->image_dir );
 
 					if ( $featured_image !== FALSE ) {
-						wp2ox::reportText('em', ' Image added to post.');
+						wp2ox::reportText('em', 'Image added to post.');
 					}
 				}
 			}
@@ -260,8 +284,12 @@ class wp2ox {
 		wp2ox::reportText( 'h3', 'Adding New Users.');
 
 		$authors = $this->wp2ox_dbh->get_authors();
+
+		$this->wp2ox_authors = new wp2ox_data( FALSE );
+
 		// The Import
 		echo '<table>';
+
 		foreach ( $authors as $author ) {
 			$moduleSID = $author['ModuleSID']; // unused
 			$author_email = $author['Email'];
@@ -272,22 +300,27 @@ class wp2ox {
 			$registerDate = date("Y-m-d H:i:s", strtotime($author['StartDate']));
 			// Creating new author
 			$newAuthor = array(
-				'user_login' => strtolower( $author_firstName[0] . $author_lastName ),
-				"user_email" => $author_email,
-				"display_name" => $author_displayName,
-				"first_name" => $author_firstName,
-				"last_name" => $author_lastName,
-				"description" => $author_description,
-				"rich_editing" => true,
+				'user_login'      => strtolower( $author_firstName[0] . $author_lastName ),
+				"user_email"      => $author_email,
+				"display_name"    => $author_displayName,
+				"first_name"      => $author_firstName,
+				"last_name"       => $author_lastName,
+				"description"     => $author_description,
+				"rich_editing"    => true,
 				"user_registered" => $registerDate,
 			);
 			$userId = wp_insert_user( $newAuthor );
 
 			if( ! is_wp_error( $userId ) ) {
-				$this->reference_array['Authors']["$userId"] = $moduleSID;
-				$this->reference_array['Authors']["$moduleSID"] = $author_firstName . ' ' . $author_lastName;
 
 				/** Add the new user to the array */
+				$this->wp2ox_authors->$userId    = $moduleSID;
+				$this->wp2ox_authors->$moduleSID = $author_firstName . ' ' . $author_lastName;
+
+				// deprecating
+				$this->reference_array['Authors']["$userId"]    = $moduleSID;
+				$this->reference_array['Authors']["$moduleSID"] = $author_firstName . ' ' . $author_lastName;
+
 
 				/** Show results on the page */
 				wp2ox::reportText(
@@ -329,12 +362,15 @@ class wp2ox {
 
 		$categories = $this->wp2ox_dbh->get_categories();
 
+		$this->wp2ox_categories = new wp2ox_data( FALSE );
+
 		// The Import
 		echo '<table>';
 		foreach ( $categories as $old_category ) {
 
 			$new_cat_ID = wp_create_category( $old_category['Title'] );
 
+			$this->wp2ox_categories->$new_cat_ID = $old_category['ModuleSID'];
 			$this->reference_array['Categories']["$new_cat_ID"] = $old_category['ModuleSID'];
 
 			wp2ox::reportText(
@@ -406,7 +442,7 @@ class wp2ox {
 		$wp_upload_dir = wp_upload_dir();
 
 		// $filename should be the path to a file in the upload directory.
-		$filename = '/Users/chrisgerberepg/Sites/demo-site/wp-content/uploads/' . $image_folder . $image_filename;
+		$filename = WP_CONTENT_DIR . '/' . $image_folder . $image_filename;
 
 		if ( file_exists( $filename ) ) {
 			// Check the type of file. We'll use this as the 'post_mime_type'.

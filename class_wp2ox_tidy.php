@@ -3,6 +3,8 @@
  * Class wp2ox_tidy
  *
  * Holds data and references for transferring between Wordpress and Oxcyon.
+ *
+ * @deprecated Replaced with wordpress functions.
  */
 
 if ( ! extension_loaded('Tidy') ) {
@@ -11,8 +13,6 @@ if ( ! extension_loaded('Tidy') ) {
 
 } else {
 
-	echo "Tidy extension loaded.";
-}
 
 class wp2ox_tidy extends Tidy {
 
@@ -149,5 +149,7 @@ class wp2ox_tidy extends Tidy {
 
 		return $text;
 	}
+
+}
 
 }

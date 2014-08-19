@@ -1,5 +1,15 @@
 <?php
-
+/**
+ * Class wp2ox_admin
+ *
+ * Displays the admin page for the importer.
+ *
+ * @TODO Register page as a WordPress import tool.
+ *
+ * @category    PHP
+ * @copyright   2014
+ * @license     WTFPL
+ */
 class wp2ox_admin {
 
 	/**
@@ -9,10 +19,13 @@ class wp2ox_admin {
 	private $options;
 
 	public function __construct() {
-
 		add_action( 'admin_menu', array( $this, 'add_management_page' ) );
 		add_action( 'admin_init', array( $this, 'page_init' ) );
 
+	}
+
+	public function register_import_page() {
+		register_importer( 'wp2ox', 'Oxcyon to WordPress', 'Import an Oxcyon Website into WordPress', array( $this, 'page_init' ) );
 	}
 
 	/**
@@ -170,12 +183,12 @@ class wp2ox_admin {
 
 			<h2>Oxcyon to WordPress Import</h2>
 
+		<?php if ( !isset( $_POST['import_wp2ox'] ) ) { ?>
+
 			<p>
 				Enter the necessary values below. After all of the fields have been set, press "Import" to run the
 				import script.
 			</p>
-
-		<?php if ( !isset( $_POST['import_wp2ox'] ) ) { ?>
 
 			<form method="post" action="options.php">
 				<?php
@@ -263,7 +276,7 @@ class wp2ox_admin {
 		?>
 		<label for="wp2ox_settings[image_dir]">
 			<input type="text" name="wp2ox_settings[image_dir]" value="<?php echo $this->options['image_dir']; ?>" />
-			<em>Directory of Images (wp-content/uploads/{Image Directory/})</em>
+			<em>Directory of Images (<?php echo WP_CONTENT_DIR; ?>/{<strong>Image Directory/</strong>})</em>
 		</label>
 		<p>
 			Directory that the script should look for within the "Uploads" folder, with the trailing slash.

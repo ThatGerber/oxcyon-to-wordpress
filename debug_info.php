@@ -4,12 +4,12 @@ assert_options(ASSERT_ACTIVE, 1);
 assert_options(ASSERT_WARNING, 0);
 assert_options(ASSERT_BAIL, 0);
 assert_options(ASSERT_QUIET_EVAL, 0);
-assert_options(ASSERT_CALLBACK, 'assert_callcack');
+assert_options(ASSERT_CALLBACK, 'assert_callback');
 set_error_handler('error_handler');
 set_exception_handler('exception_handler');
 register_shutdown_function('shutdown_handler');
 
-function assert_callcack($file, $line, $message) {
+function assert_callback($file, $line, $message) {
 	throw new Customizable_Exception($message, null, $file, $line);
 }
 

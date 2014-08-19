@@ -1,12 +1,6 @@
 <?php
 /**
- * Class oxc_postCategories
- * Returns array of category ID's (INT)
- *
- * @var $data   = string
- * @var $array  = reference table
- *
- * returns array
+ * Class wp2ox_authors
  */
 class wp2ox_author {
 
@@ -14,36 +8,37 @@ class wp2ox_author {
 	 * Source array
 	 * @var array
 	 */
-	protected $idArray;
+	public $idArray;
 	/**
 	 * Check array
 	 * @var array
 	 */
-	protected $author_id;
+	public $author_id;
 	/**
 	 * @var mixed
 	 */
-	protected $results;
+	public $results;
 
-	protected $author_byline;
+	/*
+	 * Supplied author byline
+	 */
+	public $author_byline;
 
     // Construct
-    public function __construct( $author_id, $array, $author_byline = null ) {
-        // Author ID to look for
-        $this->author_id    = $author_id;
-		// Story Byline
-		$this->author_byline = $author_byline;
-        // data to compare against
-        $this->idArray = $array;
-    }
-    // if the tag is match, add to array
-    public function resultTerms( ) {
-        // Start the loop
+    public function __construct( ) { }
 
-        return $this->validateData();
-    }
-    // checks to see if it's in array
-    protected function validateData( ) {
+	/**
+	 * checks to see if it's in array
+	 *
+	 * Returns array of category ID's (INT)
+	 */
+    public function get_author() {
+
+		// Check if you should return the default author or not
+		if ( $this->author_is_empty() === TRUE ) {
+
+			return 1;
+		}
 
 		$byline = substr( $this->author_byline, 3 );
 		// check the byline
@@ -56,7 +51,7 @@ class wp2ox_author {
 
         $newId = array_search($this->author_id, $this->idArray);
 
-        if ( $newId && $this->author_id != 'B8571AB171084BCAAE1DA200F6622E5D' ) {
+        if ( $newId ) {
 
             return $newId;
         } else {
@@ -64,4 +59,31 @@ class wp2ox_author {
             return false;
         }
     }
+
+	private function author_is_empty() {
+		if (
+		!isset( $this->idArray ) ||
+		!isset( $this->author_id )
+		) {
+
+			return TRUE;
+		}
+
+		return FALSE;
+	}
+
+
+	/**
+	 * if the tag is match, add to array
+	 *
+	 * @return bool|mixed
+	 * @deprecated
+	 *
+	 * Just validate the data.
+	 */
+	public function resultTerms( ) {
+		// Start the loop
+
+		return $this->get_author();
+	}
 }

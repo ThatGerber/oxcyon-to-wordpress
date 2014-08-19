@@ -14,32 +14,20 @@ class wp2ox_category {
 	/**
 	 * @var array
 	 */
-	protected $idArray;
+	public $idArray;
 	/**
 	 * @var array
 	 */
-	protected $data;
+	public $data;
 	/**
 	 * @var array
 	 */
-	protected $results;
+	public $results;
 
 	/**
 	 * Le Constructor
-	 *
-	 * Takes a comma separated string, turns it into an array.
-	 *
-	 * Takes that array, and checks to see if it's
-	 *
-	 * @param string $csv
-	 * @param array  $values
 	 */
-	public function __construct( $csv, $values ) {
-		// Takes comma separated string and turns into array
-		$this->data     = explode( ', ', $csv );
-        // data to compare against
-        $this->idArray  = $values;
-    }
+	public function __construct() { }
 
 	/**
 	 * Result Terms
@@ -49,7 +37,15 @@ class wp2ox_category {
 	 *
 	 * @return array
 	 */
-	public function resultTerms( ) {
+	public function get_categories( ) {
+
+		if ( $this->data_is_empty() === TRUE ) {
+
+			return NULL;
+		}
+
+		$this->data = explode( ', ', $this->data );
+
         foreach ( $this->data as $string ) {
             // see if a category matches
             $newTerm = $this->validateData( $string );
@@ -66,6 +62,26 @@ class wp2ox_category {
 
 		return null;
     }
+
+	public function get_tags( ) {
+
+		if ( $this->data_is_empty() === TRUE ) {
+
+			return NULL;
+		}
+
+		$this->data = explode( ', ', $this->data );
+
+		// Start the loop
+		foreach ( $this->data as $string ) {
+			// see if a category matches
+			$newTerm = $this->validateData( $string );
+			$this->results[] = $newTerm;
+		}
+		$tagResults = implode( ', ', $this->results );
+
+		return $tagResults;
+	}
 
 	/**
 	 * @param string $string
@@ -84,4 +100,18 @@ class wp2ox_category {
             return null;
         }
     }
+
+
+	private function data_is_empty() {
+		if (
+			!isset( $this->idArray ) ||
+			!isset( $this->data )
+		) {
+
+			return TRUE;
+		}
+
+		return FALSE;
+	}
+
 }

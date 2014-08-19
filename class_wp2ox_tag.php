@@ -10,6 +10,9 @@
  * Array of Category IDs
  *
  * returns string of tags
+ *
+ *
+ * @deprecated Replaced with function within wp2ox_category
  */
 class wp2ox_tag extends wp2ox_category {
 
@@ -20,18 +23,6 @@ class wp2ox_tag extends wp2ox_category {
 	public function __construct( $data, $array ) {
         parent::__construct($data, $array);
 
-    }
-
-    public function resultTerms( ) {
-        // Start the loop
-        foreach ( $this->data as $string ) {
-            // see if a category matches
-            $newTerm = $this->validateData( $string );
-            $this->results[] = $newTerm;
-        }
-        $tagResults = implode( ', ', $this->results );
-
-        return $tagResults;
     }
 
 }

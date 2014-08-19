@@ -3,7 +3,7 @@
  * Plugin Name: Oxcyon to WordPress
  * Plugin URI:
  * Description: Converts existing information from MySQL database to WordPress data.
- * Version: 0.3.0
+ * Version: 0.3.1
  * Author: Christopher Gerber
  * Author URI: http://www.chriswgerber.com/
  * License: WTFPL

@@ -1,8 +1,6 @@
 <?php
 /**
- * Import Functions Page
- *
- * This will hold functions and classes related to the project import.
+ * Database layer
  *
  * @category    PHP
  * @copyright   2014
@@ -13,26 +11,10 @@
 
 class wp2ox_dal extends wp2ox {
 
-	/** Search Val */
-	public $searchVal;
-
-	/** @var array Contains WordPress option */
+	/**
+	 * @var array Contains WordPress option
+	 */
 	private $options;
-
-	/**
-	 * @var string $dbusername Username to access the database
-	 */
-	private $dbusername;
-
-	/**
-	 * @var string $dbpassword Password for that user.
-	 */
-	private $dbpassword;
-
-	/**
-	 * @var string $database Name of the database
-	 */
-	private $database;
 
 	/**
 	 * @var $pdo object PHP Database Object. Contains the database connection
@@ -40,24 +22,37 @@ class wp2ox_dal extends wp2ox {
 	 */
 	private $pdo;
 
-	/** @var $stmt object Prepared statement */
+	/**
+	 * @var $stmt object Prepared statement
+	 */
 	private $stmt;
 
-	/** Import the settings */
+	/**
+	 * @deprecated Replaced with $this->options->category_value
+	 * Search Val
+	 */
+	private $searchVal;
+
+	/**
+	 * @deprecated Replaced with $this->options->db_username
+	 * @var string $dbusername Username to access the database
+	 */
+	private $dbusername;
+
+	/**
+	 * @deprecated replaced with $this->options->db_pass
+	 * @var string $dbpassword Password for that user.
+	 */
+	private $dbpassword;
+
+	/**
+	 * @deprecated Replaced with $this->options->db_name
+	 * @var string $database Name of the database
+	 */
+	private $database;
+
 	public function __construct() {
-
-		$this->set_import_variables( get_option( 'wp2ox_settings' ) );
-
-	}
-
-	private function set_import_variables($option_group) {
-		$this->options        = $option_group;
-		$this->dbusername     = $option_group['db_username'];
-		$this->dbpassword     = isset( $option_group['db_pass'] ) ? $option_group['db_pass'] : '';
-		$this->database       = $option_group['db_name'];
-		$this->searchVal      = $option_group['category_value'];
-
-
+		$this->options = new wp2ox_data;
 	}
 
 	/**
@@ -73,8 +68,8 @@ class wp2ox_dal extends wp2ox {
 	 */
 	public function queryResults( $query, $searchVal = null ) {
 
-		if ( $searchVal !== null && $this->searchVal !== null ) {
-			$this->searchVal = $searchVal;
+		if ( $searchVal !== null && $this->options->category_value == null ) {
+			$searchVal = $this->options->category_value;
 		}
 
 		$sql = $this->sql_statement( $query );
@@ -87,8 +82,8 @@ class wp2ox_dal extends wp2ox {
 
 			$this->stmt = $this->pdo->prepare( $sql );
 
-			if ( $this->searchVal !== null ) {
-				$this->stmt->bindParam(":value", $this->searchVal );
+			if ( $this->options->category_value !== null ) {
+				$this->stmt->bindParam(":value", $searchVal );
 			}
 
 			$this->stmt->execute();
@@ -122,10 +117,10 @@ class wp2ox_dal extends wp2ox {
 	private function sql_statement( $name ) {
 
 		$array = array(
-			'Articles'   => 'Select * FROM ' . $this->options["articles_table"],
-			'Authors'    => 'SELECT * FROM ' . $this->options["author_table"],
-			'Categories' => 'SELECT ModuleSID, Title, Parent FROM ' . $this->options["taxonomy_table"] . ' WHERE ModuleSID NOT REGEXP :value',
-			'Tags'       => 'SELECT ModuleSID, Title FROM ' . $this->options["taxonomy_table"],
+			'Articles'   => 'Select * FROM ' . $this->options->articles_table,
+			'Authors'    => 'SELECT * FROM ' . $this->options->author_table,
+			'Categories' => 'SELECT ModuleSID, Title FROM ' . $this->options->taxonomy_table . ' WHERE ModuleSID NOT REGEXP :value',
+			'Tags'       => 'SELECT ModuleSID, Title FROM ' . $this->options->taxonomy_table,
 		);
 
 		if ( array_key_exists( $name, $array ) ) {
@@ -145,12 +140,12 @@ class wp2ox_dal extends wp2ox {
 	private function connect() {
 
 		try {
-			$dsn = "mysql:host=localhost;dbname=" . $this->database;
+			$dsn = "mysql:host=localhost;dbname=" . $this->options->db_name;
 
 			$new_pdo = new PDO(
 				$dsn,
-				$this->dbusername,
-				$this->dbpassword
+				$this->options->db_username,
+				$this->options->db_pass
 			);
 		} catch ( Exception $oxc_e ) {
 
@@ -181,7 +176,7 @@ class wp2ox_dal extends wp2ox {
 	 */
 	public function get_categories ( ) {
 
-		return $this->queryResults('Categories', $this->searchVal );
+		return $this->queryResults('Categories', $this->options->category_value );
 	}
 
 	/**
@@ -206,6 +201,20 @@ class wp2ox_dal extends wp2ox {
 	public function get_tags ( ) {
 
 		return $this->queryResults('Tags');
+	}
+
+	/**
+	 * Sets variables for import.
+	 *
+	 * @deprecated
+	 * Use new object wp2ox_data
+	 */
+	private function set_import_variables( $option_group ) {
+		$this->options        = $option_group;
+		$this->dbusername     = $option_group['db_username'];
+		$this->dbpassword     = isset( $option_group['db_pass'] ) ? $option_group['db_pass'] : '';
+		$this->database       = $option_group['db_name'];
+		$this->searchVal      = $option_group['category_value'];
 	}
 
 }

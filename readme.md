@@ -10,10 +10,10 @@ Requires at least:
 3.0.0
 
 Tested up to:
-4.0
+3.9.2
 
 Stable tag:
-0.3.0
+0.3.1
 
 License:
 GPLv2 or later
@@ -98,5 +98,11 @@ None yet.
 
 = 0.1.0 =
 * Internal release
+
+== Upcoming ==
+
+* Database Mapping
+   Get a view of the database and map to certain WordPress import parameters.
+* Improved Image Imports
 
 [github]: https://github.com/ThatGerber/oxcyon-to-wordpress/archive/master.zip "Oxcyon to WordPress - GitHub"
