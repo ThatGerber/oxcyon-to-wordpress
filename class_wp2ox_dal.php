@@ -140,16 +140,19 @@ class wp2ox_dal extends wp2ox {
 	private function connect() {
 
 		try {
-			$dsn = "mysql:host=localhost;dbname=" . $this->options->db_name;
-
 			$new_pdo = new PDO(
-				$dsn,
-				$this->options->db_username,
-				$this->options->db_pass
+				"mysql:host=localhost;dbname=wordpress_default", // . $this->options->db_name,
+				'wp', //$this->options->db_username,
+				'wp' //$this->options->db_pass
 			);
-		} catch ( Exception $oxc_e ) {
 
-			var_export( $oxc_e->getMessage() );
+		} catch ( PDOException $oxc_e ) {
+
+			echo '<p>Unable to establish database connection.</p>';
+
+			echo '<p><strong>Error Message</strong>: ' . $oxc_e->getMessage() . '</p>';
+
+			die();
 		}
 
 		return $new_pdo;

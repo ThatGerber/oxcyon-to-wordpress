@@ -182,7 +182,7 @@ class wp2ox {
 
 			/** Set Up Categories Object */
 			$oxc_postCategories = new wp2ox_category();
-			$oxc_postCategories->idArray = $this->wp2ox_categories;
+			$oxc_postCategories->idArray = $this->get_reference_array('Categories');
 			if ( isset( $old_article['Taxonomy'] ) ) {
 				$oxc_postCategories->data = $old_article['Taxonomy'];
 			}
@@ -234,7 +234,7 @@ class wp2ox {
 				wp2ox::reportText( 'p', "Post Number: {$postNumber} added successfully");
 
 				if ( isset( $old_article['Byline'] ) && strlen( $old_article['Byline'] ) >= 1 ) {
-					wp2ox::reportText('em', 'Byline added to post.');
+					wp2ox::reportText('em', ' Byline added to post.');
 
 					add_post_meta( $import, 'Byline', $old_article['Byline'] );
 
@@ -245,8 +245,10 @@ class wp2ox {
 					$featured_image = $this->import_featured_image( $import, $old_article['Image'], $this->options->image_dir );
 
 					if ( $featured_image !== FALSE ) {
-						wp2ox::reportText('em', 'Image added to post.');
+						wp2ox::reportText('em', ' Image added to post.');
 					}
+					add_post_meta( $import, 'OXC_featured_image', $old_article['Image'] );
+					wp2ox::reportText('em', ' Image added to post meta.');
 				}
 			}
 
@@ -362,7 +364,7 @@ class wp2ox {
 
 		$categories = $this->wp2ox_dbh->get_categories();
 
-		$this->wp2ox_categories = new wp2ox_data( FALSE );
+		//$this->wp2ox_categories = new wp2ox_data( FALSE );
 
 		// The Import
 		echo '<table>';
@@ -370,7 +372,7 @@ class wp2ox {
 
 			$new_cat_ID = wp_create_category( $old_category['Title'] );
 
-			$this->wp2ox_categories->$new_cat_ID = $old_category['ModuleSID'];
+			//$this->wp2ox_categories->$new_cat_ID = $old_category['ModuleSID'];
 			$this->reference_array['Categories']["$new_cat_ID"] = $old_category['ModuleSID'];
 
 			wp2ox::reportText(
